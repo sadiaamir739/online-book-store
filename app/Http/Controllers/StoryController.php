@@ -207,7 +207,7 @@ class StoryController extends Controller
 
         $page->delete();
 
-        // Remaining pages ko 1, 2, 3, 4... mein renumber karo
+        // Renumber remaining pages
         $pages = $story->pages()
             ->orderBy('page_number')
             ->get();

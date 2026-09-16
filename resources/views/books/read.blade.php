@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{ $chapter->title }} - {{ $book->title }}</title>
+    <title>{{ $book->title }} - Read Book</title>
 
     <style>
         * {
@@ -40,52 +40,76 @@
             background: #111;
         }
 
-        .chapter-box {
+        .book-info {
             background: white;
-            padding: 35px;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .cover {
+            width: 180px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .book-info h1 {
+            font-size: 32px;
+            color: #222;
+            margin-bottom: 10px;
+        }
+
+        .author {
+            color: #777;
+            font-size: 17px;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            line-height: 1.7;
+            color: #555;
+        }
+
+        .chapters {
+            background: white;
+            padding: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .book-title {
-            color: #777;
-            font-size: 16px;
-            margin-bottom: 10px;
+        .chapters h2 {
+            margin-bottom: 20px;
+            color: #222;
+        }
+
+        .chapter {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 7px;
+        }
+
+        .chapter:hover {
+            background: #f5f5f5;
         }
 
         .chapter-number {
             color: #777;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
-        h1 {
-            font-size: 30px;
-            margin-bottom: 25px;
-            color: #222;
-        }
-
-        .pages {
-            margin-top: 20px;
-        }
-
-        .page {
-            padding: 20px 0;
-            border-bottom: 1px solid #ddd;
-            line-height: 1.8;
-            font-size: 17px;
-        }
-
-        .page:last-child {
-            border-bottom: none;
-        }
-
-        .page-number {
+        .chapter-title {
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 10px;
-            color: #555;
         }
 
-        .no-pages {
+        .no-chapters {
             color: #777;
             padding: 20px 0;
         }
@@ -97,57 +121,68 @@
 
 <div class="container">
 
-    <a href="{{ route('books.read', $book->id) }}" class="back-btn">
-        ← Back to Chapters
+    <a href="{{ route('books.index') }}" class="back-btn">
+        ← Back to Books
     </a>
 
-    <div class="chapter-box">
+    <div class="book-info">
 
-        <div class="book-title">
-            📚 {{ $book->title }}
-        </div>
-
-        <div class="chapter-number">
-            Chapter {{ $chapter->chapter_number }}
-        </div>
+        @if($book->cover_image)
+            <img
+                src="{{ asset('storage/' . $book->cover_image) }}"
+                alt="{{ $book->title }}"
+                class="cover"
+            >
+        @endif
 
         <h1>
-            {{ $chapter->title }}
+            {{ $book->title }}
         </h1>
 
-        <div class="pages">
+        <p class="author">
+            By {{ $book->author }}
+        </p>
 
-            @if($chapter->pages->count() > 0)
+        @if($book->description)
+            <div class="description">
+                {{ $book->description }}
+            </div>
+        @endif
 
-                @foreach($chapter->pages as $page)
+    </div>
 
-                    <div class="page">
+    <div class="chapters">
 
-                        <div class="page-number">
-                            Page {{ $loop->iteration }}
-                        </div>
+        <h2>📖 Chapters</h2>
 
-                        @if(isset($page->content))
-                            {{ $page->content }}
-                        @elseif(isset($page->text))
-                            {{ $page->text }}
-                        @else
-                            Page content
-                        @endif
+        @if($book->chapters->count() > 0)
 
+            @foreach($book->chapters as $chapter)
+
+                <a
+                    href="{{ route('books.chapters.read', [$book->id, $chapter->id]) }}"
+                    class="chapter"
+                >
+
+                    <div class="chapter-number">
+                        Chapter {{ $chapter->chapter_number }}
                     </div>
 
-                @endforeach
+                    <div class="chapter-title">
+                        {{ $chapter->title }}
+                    </div>
 
-            @else
+                </a>
 
-                <p class="no-pages">
-                    No pages have been added to this chapter yet.
-                </p>
+            @endforeach
 
-            @endif
+        @else
 
-        </div>
+            <p class="no-chapters">
+                No chapters have been added yet.
+            </p>
+
+        @endif
 
     </div>
 

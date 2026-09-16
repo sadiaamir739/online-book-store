@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class ChapterController extends Controller
 {
-    // Show all chapters of a book
     public function index($bookId)
     {
         $book = Book::with('chapters.pages')
@@ -17,7 +16,6 @@ class ChapterController extends Controller
         return view('books.chapters', compact('book'));
     }
 
-    // Create chapter form
     public function create($bookId)
     {
         $book = Book::findOrFail($bookId);
@@ -25,7 +23,6 @@ class ChapterController extends Controller
         return view('books.create-chapter', compact('book'));
     }
 
-    // Store chapter
     public function store(Request $request, $bookId)
     {
         $book = Book::findOrFail($bookId);
@@ -46,7 +43,6 @@ class ChapterController extends Controller
             ->with('success', 'Chapter created successfully!');
     }
 
-    // Edit chapter
     public function edit($bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
@@ -57,7 +53,6 @@ class ChapterController extends Controller
         return view('books.chapters-edit', compact('book', 'chapter'));
     }
 
-    // Update chapter
     public function update(Request $request, $bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
@@ -80,7 +75,6 @@ class ChapterController extends Controller
             ->with('success', 'Chapter updated successfully!');
     }
 
-    // Delete chapter
     public function destroy($bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
@@ -95,7 +89,6 @@ class ChapterController extends Controller
             ->with('success', 'Chapter deleted successfully!');
     }
 
-    // Read chapter
     public function read($bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
@@ -104,6 +97,8 @@ class ChapterController extends Controller
             ->where('book_id', $bookId)
             ->findOrFail($chapterId);
 
-        return view('books.read', compact('book', 'chapter'));
+        return view('books.chapter-read', compact('book', 'chapter'));
     }
 }
+
+

@@ -26,6 +26,8 @@ new class extends Component
 
         Auth::login($user);
 
+        request()->session()->regenerate();
+
         return $this->redirect('/');
     }
 };
@@ -37,7 +39,6 @@ new class extends Component
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Login - Online Book Store</title>
 
     <style>
@@ -101,12 +102,10 @@ new class extends Component
             border-radius: 9px;
             font-size: 15px;
             outline: none;
-            transition: 0.2s;
         }
 
         input:focus {
             border-color: #111;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
         }
 
         .error {
@@ -126,7 +125,6 @@ new class extends Component
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .login-btn:hover {
@@ -145,10 +143,6 @@ new class extends Component
             text-decoration: none;
         }
 
-        .register-link:hover {
-            text-decoration: underline;
-        }
-
         .home-link {
             display: block;
             text-align: center;
@@ -157,92 +151,80 @@ new class extends Component
             text-decoration: none;
             font-size: 14px;
         }
-
-        .home-link:hover {
-            color: #111;
-        }
     </style>
 </head>
 
 <body>
 
-    <div class="login-card">
+<div class="login-card">
 
-        <div class="logo">📚</div>
+    <div class="logo">📚</div>
 
-        <h1>Welcome Back</h1>
+    <h1>Welcome Back</h1>
 
-        <p class="subtitle">
-            Login to your Online Book Store account
-        </p>
+    <p class="subtitle">
+        Login to your Online Book Store account
+    </p>
 
-        <form wire:submit="login">
+    <form wire:submit="login">
 
-            <div class="form-group">
+        <div class="form-group">
 
-                <label for="email">
-                    Email Address
-                </label>
+            <label for="email">Email Address</label>
 
-                <input
-                    id="email"
-                    type="email"
-                    wire:model="email"
-                    placeholder="Enter your email"
-                    autocomplete="email"
-                >
+            <input
+                id="email"
+                type="email"
+                wire:model="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+            >
 
-                @error('email')
-                    <span class="error">{{ $message }}</span>
-                @enderror
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="password">
-                    Password
-                </label>
-
-                <input
-                    id="password"
-                    type="password"
-                    wire:model="password"
-                    placeholder="Enter your password"
-                    autocomplete="current-password"
-                >
-
-                @error('password')
-                    <span class="error">{{ $message }}</span>
-                @enderror
-
-            </div>
-
-
-            <button type="submit" class="login-btn">
-                Login
-            </button>
-
-        </form>
-
-
-        <div class="register-text">
-
-            Don't have an account?
-
-            <a href="{{ route('register') }}" class="register-link">
-                Create Account
-            </a>
+            @error('email')
+                <span class="error">{{ $message }}</span>
+            @enderror
 
         </div>
 
+        <div class="form-group">
 
-        <a href="{{ url('/') }}" class="home-link">
-            ← Back to Home
+            <label for="password">Password</label>
+
+            <input
+                id="password"
+                type="password"
+                wire:model="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+            >
+
+            @error('password')
+                <span class="error">{{ $message }}</span>
+            @enderror
+
+        </div>
+
+        <button type="submit" class="login-btn">
+            Login
+        </button>
+
+    </form>
+
+    <div class="register-text">
+
+        Don't have an account?
+
+        <a href="{{ route('register') }}" class="register-link">
+            Create Account
         </a>
 
     </div>
+
+    <a href="{{ url('/') }}" class="home-link">
+        ← Back to Home
+    </a>
+
+</div>
 
 </body>
 
