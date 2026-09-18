@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class ChapterController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Show All Chapters
+    |--------------------------------------------------------------------------
+    */
     public function index($bookId)
     {
         $book = Book::with('chapters.pages')
@@ -16,6 +21,12 @@ class ChapterController extends Controller
         return view('books.chapters', compact('book'));
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Create Chapter Form
+    |--------------------------------------------------------------------------
+    */
     public function create($bookId)
     {
         $book = Book::findOrFail($bookId);
@@ -23,6 +34,12 @@ class ChapterController extends Controller
         return view('books.create-chapter', compact('book'));
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Store Chapter
+    |--------------------------------------------------------------------------
+    */
     public function store(Request $request, $bookId)
     {
         $book = Book::findOrFail($bookId);
@@ -43,6 +60,12 @@ class ChapterController extends Controller
             ->with('success', 'Chapter created successfully!');
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Edit Chapter Form
+    |--------------------------------------------------------------------------
+    */
     public function edit($bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
@@ -50,9 +73,15 @@ class ChapterController extends Controller
         $chapter = Chapter::where('book_id', $bookId)
             ->findOrFail($chapterId);
 
-        return view('books.chapters-edit', compact('book', 'chapter'));
+        return view('books.edit-chapter', compact('book', 'chapter'));
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Update Chapter
+    |--------------------------------------------------------------------------
+    */
     public function update(Request $request, $bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
@@ -75,6 +104,12 @@ class ChapterController extends Controller
             ->with('success', 'Chapter updated successfully!');
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Delete Chapter
+    |--------------------------------------------------------------------------
+    */
     public function destroy($bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
@@ -89,6 +124,12 @@ class ChapterController extends Controller
             ->with('success', 'Chapter deleted successfully!');
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Read Chapter
+    |--------------------------------------------------------------------------
+    */
     public function read($bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
@@ -97,8 +138,34 @@ class ChapterController extends Controller
             ->where('book_id', $bookId)
             ->findOrFail($chapterId);
 
-        return view('books.chapter-read', compact('book', 'chapter'));
+        /*
+        |--------------------------------------------------------------------------
+        | Previous Chapter
+        |--------------------------------------------------------------------------
+        */
+        $previousChapter = Chapter::where('book_id', $bookId)
+            ->where('chapter_number', '<', $chapter->chapter_number)
+            ->orderBy('chapter_number', 'desc')
+            ->first();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Next Chapter
+        |--------------------------------------------------------------------------
+        */
+        $nextChapter = Chapter::where('book_id', $bookId)
+            ->where('chapter_number', '>', $chapter->chapter_number)
+            ->orderBy('chapter_number', 'asc')
+            ->first();
+
+        return view(
+            'books.chapter-read',
+            compact(
+                'book',
+                'chapter',
+                'previousChapter',
+                'nextChapter'
+            )
+        );
     }
 }
-
-

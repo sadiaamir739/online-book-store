@@ -7,6 +7,12 @@
 
     <title>Edit Chapter | {{ $book->title }}</title>
 
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
     <style>
         * {
             box-sizing: border-box;
@@ -16,33 +22,60 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f8;
-            color: #222;
+            background: #f4f6fa;
+            color: #17243d;
             min-height: 100vh;
         }
 
+        /* ================================
+           HEADER
+        ================================= */
+
         .header {
-            background: #222;
+            background: #17243d;
             color: white;
-            padding: 22px 50px;
+            padding: 20px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 3px 12px rgba(23, 36, 61, 0.18);
         }
 
         .logo {
-            font-size: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
             font-weight: bold;
         }
 
+        .logo i {
+            color: #d9a943;
+            font-size: 27px;
+        }
+
         .back-btn {
-            background: white;
-            color: #222;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #304e78;
+            color: white;
             text-decoration: none;
             padding: 10px 18px;
-            border-radius: 6px;
+            border-radius: 7px;
+            font-size: 14px;
             font-weight: bold;
+            transition: 0.2s ease;
         }
+
+        .back-btn:hover {
+            background: #d9a943;
+            color: #17243d;
+        }
+
+        /* ================================
+           MAIN CONTAINER
+        ================================= */
 
         .container {
             width: 90%;
@@ -50,50 +83,80 @@
             margin: 45px auto;
         }
 
+        /* ================================
+           PAGE HEADING
+        ================================= */
+
         .page-heading {
             margin-bottom: 25px;
         }
 
         .page-heading h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 32px;
+            color: #17243d;
             margin-bottom: 8px;
         }
 
-        .page-heading p {
-            color: #777;
-            font-size: 15px;
+        .page-heading h1 i {
+            color: #d9a943;
         }
+
+        .page-heading p {
+            color: #667085;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ================================
+           BOOK INFO
+        ================================= */
 
         .book-info {
             background: white;
-            border-radius: 10px;
-            padding: 20px 25px;
+            border-radius: 12px;
+            padding: 22px 25px;
             margin-bottom: 25px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-            border-left: 5px solid #222;
+            box-shadow: 0 4px 16px rgba(23, 36, 61, 0.08);
+            border-left: 5px solid #d9a943;
         }
 
         .book-info span {
-            color: #777;
+            color: #667085;
             font-size: 14px;
         }
 
-        .book-info strong {
-            display: block;
+        .book-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
             font-size: 20px;
-            margin-top: 5px;
+            margin-top: 6px;
+            color: #17243d;
+        }
+
+        .book-title i {
+            color: #304e78;
         }
 
         .chapter-number {
             margin-top: 10px;
-            color: #666;
+            color: #304e78;
+            font-size: 14px;
+            font-weight: 600;
         }
+
+        /* ================================
+           FORM CARD
+        ================================= */
 
         .form-card {
             background: white;
             border-radius: 12px;
             padding: 35px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 18px rgba(23, 36, 61, 0.08);
         }
 
         .form-group {
@@ -105,6 +168,7 @@
             font-size: 15px;
             font-weight: bold;
             margin-bottom: 9px;
+            color: #17243d;
         }
 
         .required {
@@ -114,35 +178,48 @@
         input {
             width: 100%;
             padding: 14px 15px;
-            border: 1px solid #d0d0d0;
+            border: 1px solid #d5dbe5;
             border-radius: 7px;
             font-size: 15px;
+            color: #17243d;
+            background: #fff;
             outline: none;
-            transition: 0.2s;
+            transition: 0.2s ease;
         }
 
         input:focus {
-            border-color: #222;
-            box-shadow: 0 0 0 2px rgba(34, 34, 34, 0.08);
+            border-color: #304e78;
+            box-shadow: 0 0 0 3px rgba(48, 78, 120, 0.12);
+        }
+
+        input::placeholder {
+            color: #98a2b3;
         }
 
         .help-text {
-            color: #888;
+            color: #667085;
             font-size: 13px;
             margin-top: 7px;
+            line-height: 1.5;
         }
 
+        /* ================================
+           VALIDATION ERRORS
+        ================================= */
+
         .errors {
-            background: #fff0f0;
-            border: 1px solid #f0b5b5;
+            background: #fff4f4;
+            border: 1px solid #efb4b4;
             color: #a51f1f;
             padding: 15px 18px;
-            border-radius: 7px;
+            border-radius: 8px;
             margin-bottom: 25px;
         }
 
         .errors strong {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 7px;
             margin-bottom: 7px;
         }
 
@@ -154,15 +231,23 @@
             margin-bottom: 4px;
         }
 
+        /* ================================
+           FORM ACTIONS
+        ================================= */
+
         .form-actions {
             display: flex;
             justify-content: flex-end;
             gap: 12px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
         }
 
         .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             padding: 12px 22px;
             border-radius: 7px;
             text-decoration: none;
@@ -170,30 +255,53 @@
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.2s ease;
         }
 
         .cancel-btn {
-            background: #eee;
-            color: #333;
+            background: #e9edf3;
+            color: #17243d;
+        }
+
+        .cancel-btn:hover {
+            background: #dce2ea;
         }
 
         .save-btn {
-            background: #222;
+            background: #304e78;
             color: white;
         }
 
         .save-btn:hover {
-            background: #444;
+            background: #17243d;
         }
+
+        .save-btn i {
+            color: #d9a943;
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
 
         @media (max-width: 700px) {
 
             .header {
-                padding: 20px;
+                padding: 18px 20px;
+                gap: 15px;
             }
 
             .logo {
-                font-size: 20px;
+                font-size: 19px;
+            }
+
+            .logo i {
+                font-size: 22px;
+            }
+
+            .back-btn {
+                padding: 9px 12px;
+                font-size: 13px;
             }
 
             .container {
@@ -215,7 +323,6 @@
 
             .btn {
                 width: 100%;
-                text-align: center;
             }
         }
     </style>
@@ -226,14 +333,16 @@
 <header class="header">
 
     <div class="logo">
-        📚 Online Book Store
+        <i class="bi bi-book-half"></i>
+        <span>Online Book Store</span>
     </div>
 
     <a
         href="{{ route('books.chapters', $book->id) }}"
         class="back-btn"
     >
-        ← Back to Chapters
+        <i class="bi bi-arrow-left"></i>
+        Back to Chapters
     </a>
 
 </header>
@@ -241,23 +350,29 @@
 
 <main class="container">
 
+    <!-- PAGE HEADING -->
     <div class="page-heading">
 
-        <h1>✏️ Edit Chapter</h1>
+        <h1>
+            <i class="bi bi-pencil-square"></i>
+            Edit Chapter
+        </h1>
 
         <p>
-            Update the title of this chapter.
+            Update the chapter number or title and save your changes.
         </p>
 
     </div>
 
 
+    <!-- BOOK INFORMATION -->
     <div class="book-info">
 
         <span>Book:</span>
 
-        <strong>
-            📖 {{ $book->title }}
+        <strong class="book-title">
+            <i class="bi bi-book"></i>
+            {{ $book->title }}
         </strong>
 
         <div class="chapter-number">
@@ -267,6 +382,7 @@
     </div>
 
 
+    <!-- FORM -->
     <div class="form-card">
 
         @if ($errors->any())
@@ -274,6 +390,7 @@
             <div class="errors">
 
                 <strong>
+                    <i class="bi bi-exclamation-circle"></i>
                     Please fix the following errors:
                 </strong>
 
@@ -303,6 +420,32 @@
             @method('PUT')
 
 
+            <!-- CHAPTER NUMBER -->
+            <div class="form-group">
+
+                <label for="chapter_number">
+                    Chapter Number
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="number"
+                    id="chapter_number"
+                    name="chapter_number"
+                    value="{{ old('chapter_number', $chapter->chapter_number) }}"
+                    min="1"
+                    placeholder="Enter chapter number"
+                    required
+                >
+
+                <p class="help-text">
+                    Enter the number for this chapter.
+                </p>
+
+            </div>
+
+
+            <!-- CHAPTER TITLE -->
             <div class="form-group">
 
                 <label for="title">
@@ -321,18 +464,20 @@
                 >
 
                 <p class="help-text">
-                    Change the chapter title and click Update Chapter.
+                    Enter the title that will be displayed to readers.
                 </p>
 
             </div>
 
 
+            <!-- ACTION BUTTONS -->
             <div class="form-actions">
 
                 <a
                     href="{{ route('books.chapters', $book->id) }}"
                     class="btn cancel-btn"
                 >
+                    <i class="bi bi-x-circle"></i>
                     Cancel
                 </a>
 
@@ -340,7 +485,8 @@
                     type="submit"
                     class="btn save-btn"
                 >
-                    💾 Update Chapter
+                    <i class="bi bi-check-circle"></i>
+                    Update Chapter
                 </button>
 
             </div>

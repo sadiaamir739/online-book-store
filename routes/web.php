@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookController;
@@ -10,17 +9,30 @@ use App\Http\Controllers\StoryController;
 use App\Http\Controllers\BookPageController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
 
 
 // =====================================================
 // AUTH
 // =====================================================
 
-Volt::route('/login', 'auth.login')
+// LOGIN
+
+Route::get('/login', [LoginController::class, 'showLogin'])
     ->name('login');
 
-Volt::route('/register', 'auth.register')
+Route::post('/login', [LoginController::class, 'login'])
+    ->name('login.submit');
+
+
+// REGISTER
+
+Route::get('/register', [RegisterController::class, 'showRegister'])
     ->name('register');
+
+Route::post('/register', [RegisterController::class, 'register'])
+    ->name('register.submit');
 
 
 // =====================================================
@@ -61,28 +73,66 @@ Route::middleware('auth')->group(function () {
 
 
 // =====================================================
+// ADMIN DASHBOARD
+// =====================================================
+
+Route::middleware(['auth', 'can:admin'])->group(function () {
+
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
+});
+
+
+// =====================================================
 // CATEGORIES
 // =====================================================
+
+// PUBLIC - VIEW CATEGORIES
 
 Route::get('/categories', [CategoryController::class, 'index'])
     ->name('categories.index');
 
+
+// ADMIN - CATEGORY MANAGEMENT
+
 Route::middleware(['auth', 'can:admin'])->group(function () {
 
-    Route::get('/categories/create', [CategoryController::class, 'create'])
-        ->name('categories.create');
+    // CREATE CATEGORY
 
-    Route::post('/categories', [CategoryController::class, 'store'])
-        ->name('categories.store');
+    Route::get('/categories/create',
+        [CategoryController::class, 'create']
+    )->name('categories.create');
 
-    Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])
-        ->name('categories.edit');
 
-    Route::put('/categories/{category}', [CategoryController::class, 'update'])
-        ->name('categories.update');
+    // STORE CATEGORY
 
-    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
-        ->name('categories.destroy');
+    Route::post('/categories',
+        [CategoryController::class, 'store']
+    )->name('categories.store');
+
+
+    // EDIT CATEGORY
+
+    Route::get('/categories/{category}/edit',
+        [CategoryController::class, 'edit']
+    )->name('categories.edit');
+
+
+    // UPDATE CATEGORY
+
+    Route::put('/categories/{category}',
+        [CategoryController::class, 'update']
+    )->name('categories.update');
+
+
+    // DELETE CATEGORY
+
+    Route::delete('/categories/{category}',
+        [CategoryController::class, 'destroy']
+    )->name('categories.destroy');
+
 });
 
 
@@ -90,28 +140,57 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 // BOOKS
 // =====================================================
 
+// PUBLIC - VIEW BOOKS
+
 Route::get('/books', [BookController::class, 'index'])
     ->name('books.index');
 
-Route::get('/books/{book}/read', [BookController::class, 'read'])
-    ->name('books.read');
+
+// PUBLIC - READ BOOK
+
+Route::get('/books/{book}/read',
+    [BookController::class, 'read']
+)->name('books.read');
+
+
+// ADMIN - BOOK MANAGEMENT
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
 
-    Route::get('/books/create', [BookController::class, 'create'])
-        ->name('books.create');
+    // CREATE BOOK
 
-    Route::post('/books', [BookController::class, 'store'])
-        ->name('books.store');
+    Route::get('/books/create',
+        [BookController::class, 'create']
+    )->name('books.create');
 
-    Route::get('/books/{book}/edit', [BookController::class, 'edit'])
-        ->name('books.edit');
 
-    Route::put('/books/{book}', [BookController::class, 'update'])
-        ->name('books.update');
+    // STORE BOOK
 
-    Route::delete('/books/{book}', [BookController::class, 'destroy'])
-        ->name('books.destroy');
+    Route::post('/books',
+        [BookController::class, 'store']
+    )->name('books.store');
+
+
+    // EDIT BOOK
+
+    Route::get('/books/{book}/edit',
+        [BookController::class, 'edit']
+    )->name('books.edit');
+
+
+    // UPDATE BOOK
+
+    Route::put('/books/{book}',
+        [BookController::class, 'update']
+    )->name('books.update');
+
+
+    // DELETE BOOK
+
+    Route::delete('/books/{book}',
+        [BookController::class, 'destroy']
+    )->name('books.destroy');
+
 });
 
 
@@ -121,23 +200,47 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
 
-    Route::get('/books/{book}/pages', [BookPageController::class, 'index'])
-        ->name('books.pages');
+    // VIEW / MANAGE BOOK PAGES
 
-    Route::get('/books/{book}/pages/create', [BookPageController::class, 'create'])
-        ->name('books.pages.create');
+    Route::get('/books/{book}/pages',
+        [BookPageController::class, 'index']
+    )->name('books.pages');
 
-    Route::post('/books/{book}/pages', [BookPageController::class, 'store'])
-        ->name('books.pages.store');
 
-    Route::get('/books/{book}/pages/{page}/edit', [BookPageController::class, 'edit'])
-        ->name('books.pages.edit');
+    // CREATE BOOK PAGE
 
-    Route::put('/books/{book}/pages/{page}', [BookPageController::class, 'update'])
-        ->name('books.pages.update');
+    Route::get('/books/{book}/pages/create',
+        [BookPageController::class, 'create']
+    )->name('books.pages.create');
 
-    Route::delete('/books/{book}/pages/{page}', [BookPageController::class, 'destroy'])
-        ->name('books.pages.destroy');
+
+    // STORE BOOK PAGE
+
+    Route::post('/books/{book}/pages',
+        [BookPageController::class, 'store']
+    )->name('books.pages.store');
+
+
+    // EDIT BOOK PAGE
+
+    Route::get('/books/{book}/pages/{page}/edit',
+        [BookPageController::class, 'edit']
+    )->name('books.pages.edit');
+
+
+    // UPDATE BOOK PAGE
+
+    Route::put('/books/{book}/pages/{page}',
+        [BookPageController::class, 'update']
+    )->name('books.pages.update');
+
+
+    // DELETE BOOK PAGE
+
+    Route::delete('/books/{book}/pages/{page}',
+        [BookPageController::class, 'destroy']
+    )->name('books.pages.destroy');
+
 });
 
 
@@ -147,23 +250,47 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
 
-    Route::get('/books/{book}/chapters', [ChapterController::class, 'index'])
-        ->name('books.chapters');
+    // VIEW / MANAGE CHAPTERS
 
-    Route::get('/books/{book}/chapters/create', [ChapterController::class, 'create'])
-        ->name('books.chapters.create');
+    Route::get('/books/{book}/chapters',
+        [ChapterController::class, 'index']
+    )->name('books.chapters');
 
-    Route::post('/books/{book}/chapters', [ChapterController::class, 'store'])
-        ->name('books.chapters.store');
 
-    Route::get('/books/{book}/chapters/{chapter}/edit', [ChapterController::class, 'edit'])
-        ->name('books.chapters.edit');
+    // CREATE CHAPTER
 
-    Route::put('/books/{book}/chapters/{chapter}', [ChapterController::class, 'update'])
-        ->name('books.chapters.update');
+    Route::get('/books/{book}/chapters/create',
+        [ChapterController::class, 'create']
+    )->name('books.chapters.create');
 
-    Route::delete('/books/{book}/chapters/{chapter}', [ChapterController::class, 'destroy'])
-        ->name('books.chapters.destroy');
+
+    // STORE CHAPTER
+
+    Route::post('/books/{book}/chapters',
+        [ChapterController::class, 'store']
+    )->name('books.chapters.store');
+
+
+    // EDIT CHAPTER
+
+    Route::get('/books/{book}/chapters/{chapter}/edit',
+        [ChapterController::class, 'edit']
+    )->name('books.chapters.edit');
+
+
+    // UPDATE CHAPTER
+
+    Route::put('/books/{book}/chapters/{chapter}',
+        [ChapterController::class, 'update']
+    )->name('books.chapters.update');
+
+
+    // DELETE CHAPTER
+
+    Route::delete('/books/{book}/chapters/{chapter}',
+        [ChapterController::class, 'destroy']
+    )->name('books.chapters.destroy');
+
 });
 
 
@@ -180,38 +307,52 @@ Route::get('/books/{book}/chapters/{chapter}/read',
 // STORIES
 // =====================================================
 
-Route::get('/stories', [StoryController::class, 'index'])
-    ->name('stories.index');
+// PUBLIC - VIEW STORIES LIST
 
-// SHOW SINGLE STORY
-Route::get('/stories/{story}',
-    [StoryController::class, 'show']
-)->name('stories.show');
+Route::get('/stories',
+    [StoryController::class, 'index']
+)->name('stories.index');
 
 
-Route::middleware('auth')->group(function () {
+// =====================================================
+// ADMIN - STORY MANAGEMENT
+// =====================================================
+
+Route::middleware(['auth', 'can:admin'])->group(function () {
+
+    // IMPORTANT:
+    // /stories/create MUST come before /stories/{story}
 
     // CREATE STORY
+
     Route::get('/stories/create',
         [StoryController::class, 'create']
     )->name('stories.create');
 
+
     // STORE STORY
+
     Route::post('/stories',
         [StoryController::class, 'store']
     )->name('stories.store');
 
+
     // EDIT STORY
+
     Route::get('/stories/{story}/edit',
         [StoryController::class, 'edit']
     )->name('stories.edit');
 
+
     // UPDATE STORY
+
     Route::put('/stories/{story}',
         [StoryController::class, 'update']
     )->name('stories.update');
 
+
     // DELETE STORY
+
     Route::delete('/stories/{story}',
         [StoryController::class, 'destroy']
     )->name('stories.destroy');
@@ -221,28 +362,59 @@ Route::middleware('auth')->group(function () {
     // STORY PAGES
     // =================================================
 
+    // MANAGE STORY PAGES
+
     Route::get('/stories/{story}/pages',
         [StoryController::class, 'pages']
     )->name('stories.pages');
+
+
+    // CREATE STORY PAGE
 
     Route::get('/stories/{story}/pages/create',
         [StoryController::class, 'createPage']
     )->name('stories.pages.create');
 
+
+    // STORE STORY PAGE
+
     Route::post('/stories/{story}/pages',
         [StoryController::class, 'storePage']
     )->name('stories.pages.store');
+
+
+    // EDIT STORY PAGE
 
     Route::get('/stories/{story}/pages/{page}/edit',
         [StoryController::class, 'editPage']
     )->name('stories.pages.edit');
 
+
+    // UPDATE STORY PAGE
+
     Route::put('/stories/{story}/pages/{page}',
         [StoryController::class, 'updatePage']
     )->name('stories.pages.update');
+
+
+    // DELETE STORY PAGE
 
     Route::delete('/stories/{story}/pages/{page}',
         [StoryController::class, 'deletePage']
     )->name('stories.pages.delete');
 
 });
+
+
+// =====================================================
+// PUBLIC STORY DETAILS
+// =====================================================
+//
+// IMPORTANT:
+// This route is AFTER /stories/create so Laravel does
+// not treat "create" as a story ID.
+//
+
+Route::get('/stories/{story}',
+    [StoryController::class, 'show']
+)->name('stories.show');

@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{{ $book->title }} - Chapters</title>
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
 
     <style>
         * {
@@ -15,25 +22,37 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f8;
-            color: #222;
+            background: #f4f6fa;
+            color: #17243d;
             min-height: 100vh;
         }
 
-        /* Header */
+        /* ================================
+           HEADER
+        ================================= */
+
         .header {
-            background: #222;
+            background: #17243d;
             color: white;
-            padding: 22px 50px;
+            padding: 20px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 20px;
+            box-shadow: 0 3px 12px rgba(23, 36, 61, 0.18);
         }
 
         .logo {
-            font-size: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
             font-weight: bold;
+        }
+
+        .logo i {
+            color: #d9a943;
+            font-size: 27px;
         }
 
         .header-buttons {
@@ -43,64 +62,107 @@
         }
 
         .header-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
             background: white;
-            color: #222;
+            color: #17243d;
             text-decoration: none;
-            padding: 10px 17px;
-            border-radius: 6px;
+            padding: 10px 16px;
+            border-radius: 7px;
+            font-size: 14px;
             font-weight: bold;
+            transition: 0.2s ease;
+        }
+
+        .header-btn:hover {
+            background: #d9a943;
+            color: #17243d;
         }
 
         .header-btn.dark {
-            background: #444;
+            background: #304e78;
             color: white;
         }
 
-        /* Container */
+        .header-btn.dark:hover {
+            background: #d9a943;
+            color: #17243d;
+        }
+
+        /* ================================
+           CONTAINER
+        ================================= */
+
         .container {
             width: 90%;
             max-width: 1100px;
             margin: 45px auto;
         }
 
-        /* Heading */
+        /* ================================
+           HEADING
+        ================================= */
+
         .page-heading {
             margin-bottom: 25px;
         }
 
         .page-heading h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 32px;
+            color: #17243d;
             margin-bottom: 8px;
         }
 
+        .page-heading h1 i {
+            color: #d9a943;
+        }
+
         .page-heading p {
-            color: #777;
+            color: #667085;
             font-size: 15px;
+            line-height: 1.6;
         }
 
-        /* Success */
+        /* ================================
+           SUCCESS MESSAGE
+        ================================= */
+
         .success {
-            background: #d4edda;
-            color: #155724;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: #edf7f0;
+            color: #216e39;
             padding: 13px 17px;
-            border-radius: 7px;
+            border-radius: 8px;
             margin-bottom: 25px;
-            border: 1px solid #b7dfc0;
+            border: 1px solid #b9dfc2;
         }
 
-        /* Chapter Card */
+        .success i {
+            font-size: 18px;
+        }
+
+        /* ================================
+           CHAPTER CARD
+        ================================= */
+
         .chapter-card {
             background: white;
             border-radius: 12px;
             margin-bottom: 22px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(23, 36, 61, 0.08);
             overflow: hidden;
         }
 
         .chapter-header {
             padding: 22px 25px;
-            background: #fafafa;
-            border-bottom: 1px solid #eee;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
 
             display: flex;
             justify-content: space-between;
@@ -113,27 +175,44 @@
         }
 
         .chapter-number {
-            display: inline-block;
-            background: #222;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #17243d;
             color: white;
-            padding: 6px 11px;
-            border-radius: 5px;
+            padding: 7px 12px;
+            border-radius: 6px;
             font-size: 13px;
             font-weight: bold;
-            margin-bottom: 9px;
+            margin-bottom: 10px;
+        }
+
+        .chapter-number i {
+            color: #d9a943;
         }
 
         .chapter-info h2 {
             font-size: 22px;
-            margin-bottom: 5px;
+            color: #17243d;
+            margin-bottom: 6px;
         }
 
         .chapter-info p {
-            color: #777;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #667085;
             font-size: 14px;
         }
 
-        /* Chapter Actions */
+        .chapter-info p i {
+            color: #304e78;
+        }
+
+        /* ================================
+           CHAPTER ACTIONS
+        ================================= */
+
         .chapter-actions {
             display: flex;
             gap: 8px;
@@ -142,50 +221,80 @@
         }
 
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
             padding: 9px 14px;
-            border-radius: 6px;
+            border-radius: 7px;
             text-decoration: none;
             border: none;
             cursor: pointer;
             font-size: 14px;
             font-weight: bold;
+            transition: 0.2s ease;
         }
 
         .add-page {
-            background: #222;
+            background: #304e78;
             color: white;
+        }
+
+        .add-page:hover {
+            background: #17243d;
         }
 
         .edit {
-            background: #eee;
-            color: #222;
+            background: #e9edf3;
+            color: #17243d;
+        }
+
+        .edit:hover {
+            background: #d9a943;
+            color: #17243d;
         }
 
         .delete {
-            background: #dc3545;
+            background: #c0392b;
             color: white;
         }
 
-        .btn:hover {
-            opacity: 0.85;
+        .delete:hover {
+            background: #a93226;
         }
 
-        /* Pages */
+        /* ================================
+           PAGES SECTION
+        ================================= */
+
         .pages-section {
-            padding: 20px 25px 25px;
+            padding: 22px 25px 25px;
+            background: #fafbfd;
         }
 
         .pages-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 15px;
-            color: #444;
+            color: #17243d;
         }
 
+        .pages-title i {
+            color: #d9a943;
+            font-size: 18px;
+        }
+
+        /* ================================
+           PAGE CARD
+        ================================= */
+
         .page-card {
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
+            background: white;
+            border: 1px solid #e1e6ee;
+            border-radius: 9px;
             padding: 15px 17px;
             margin-bottom: 10px;
 
@@ -193,6 +302,13 @@
             justify-content: space-between;
             align-items: center;
             gap: 15px;
+
+            transition: 0.2s ease;
+        }
+
+        .page-card:hover {
+            border-color: #304e78;
+            box-shadow: 0 3px 10px rgba(48, 78, 120, 0.08);
         }
 
         .page-card:last-child {
@@ -201,30 +317,43 @@
 
         .page-info {
             flex: 1;
+            min-width: 0;
         }
 
         .page-number {
-            color: #777;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #304e78;
             font-size: 13px;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
+        .page-number i {
+            color: #d9a943;
+        }
+
         .page-info h3 {
             font-size: 16px;
+            color: #17243d;
             margin-bottom: 5px;
         }
 
         .page-preview {
-            color: #777;
+            color: #667085;
             font-size: 13px;
-
             max-width: 700px;
+            line-height: 1.5;
 
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+        /* ================================
+           PAGE ACTIONS
+        ================================= */
 
         .page-actions {
             display: flex;
@@ -232,48 +361,88 @@
             flex-wrap: wrap;
         }
 
+        /* ================================
+           NO PAGES
+        ================================= */
+
         .no-pages {
-            background: #f8f8f8;
-            border: 1px dashed #ccc;
-            padding: 20px;
-            border-radius: 7px;
+            background: white;
+            border: 1px dashed #c8d0dc;
+            padding: 25px 20px;
+            border-radius: 8px;
             text-align: center;
-            color: #777;
+            color: #667085;
         }
+
+        .no-pages i {
+            display: block;
+            font-size: 28px;
+            color: #d9a943;
+            margin-bottom: 10px;
+        }
+
+        .no-pages-text {
+            margin-bottom: 15px;
+        }
+
+        /* ================================
+           NO CHAPTERS
+        ================================= */
 
         .no-chapters {
             background: white;
-            padding: 50px 30px;
+            padding: 55px 30px;
             text-align: center;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(23, 36, 61, 0.08);
+        }
+
+        .no-chapters > i {
+            display: block;
+            font-size: 48px;
+            color: #d9a943;
+            margin-bottom: 15px;
         }
 
         .no-chapters h2 {
+            color: #17243d;
             margin-bottom: 10px;
         }
 
         .no-chapters p {
-            color: #777;
+            color: #667085;
             margin-bottom: 20px;
         }
 
-        /* Bottom Button */
+        /* ================================
+           BOTTOM BUTTON
+        ================================= */
+
         .bottom-action {
             margin-top: 25px;
         }
 
         .bottom-action a {
-            display: inline-block;
-            background: #222;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #304e78;
             color: white;
             text-decoration: none;
             padding: 12px 20px;
             border-radius: 7px;
             font-weight: bold;
+            transition: 0.2s ease;
         }
 
-        /* Mobile */
+        .bottom-action a:hover {
+            background: #17243d;
+        }
+
+        /* ================================
+           MOBILE
+        ================================= */
+
         @media (max-width: 750px) {
 
             .header {
@@ -284,6 +453,15 @@
 
             .logo {
                 font-size: 21px;
+            }
+
+            .header-buttons {
+                width: 100%;
+            }
+
+            .header-btn {
+                flex: 1;
+                justify-content: center;
             }
 
             .container {
@@ -304,6 +482,10 @@
                 width: 100%;
             }
 
+            .chapter-actions .btn {
+                flex: 1;
+            }
+
             .page-card {
                 flex-direction: column;
                 align-items: flex-start;
@@ -315,7 +497,6 @@
 
             .page-actions .btn {
                 flex: 1;
-                text-align: center;
             }
 
             .page-preview {
@@ -330,21 +511,34 @@
 <header class="header">
 
     <div class="logo">
-        📚 Online Book Store
+        <i class="bi bi-book-half"></i>
+        <span>Online Book Store</span>
     </div>
 
     <div class="header-buttons">
 
-        <a href="{{ route('books.index') }}" class="header-btn">
-            ← Books
+        <a
+            href="{{ route('books.index') }}"
+            class="header-btn"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Books
         </a>
 
-        <a href="{{ route('books.pages', $book->id) }}" class="header-btn dark">
-            📖 All Pages
+        <a
+            href="{{ route('books.pages', $book->id) }}"
+            class="header-btn dark"
+        >
+            <i class="bi bi-file-earmark-text"></i>
+            All Pages
         </a>
 
-        <a href="{{ route('books.chapters.create', $book->id) }}" class="header-btn">
-            + Add Chapter
+        <a
+            href="{{ route('books.chapters.create', $book->id) }}"
+            class="header-btn"
+        >
+            <i class="bi bi-plus-circle"></i>
+            Add Chapter
         </a>
 
     </div>
@@ -354,10 +548,13 @@
 
 <main class="container">
 
+    <!-- PAGE HEADING -->
+
     <div class="page-heading">
 
         <h1>
-            📚 {{ $book->title }}
+            <i class="bi bi-journal-bookmark"></i>
+            {{ $book->title }}
         </h1>
 
         <p>
@@ -367,25 +564,32 @@
     </div>
 
 
+    <!-- SUCCESS MESSAGE -->
+
     @if(session('success'))
 
         <div class="success">
-            ✅ {{ session('success') }}
+            <i class="bi bi-check-circle-fill"></i>
+            <span>{{ session('success') }}</span>
         </div>
 
     @endif
 
 
+    <!-- CHAPTERS -->
+
     @forelse($book->chapters as $chapter)
 
         <div class="chapter-card">
 
-            <!-- Chapter Header -->
+            <!-- CHAPTER HEADER -->
+
             <div class="chapter-header">
 
                 <div class="chapter-info">
 
                     <span class="chapter-number">
+                        <i class="bi bi-bookmark-fill"></i>
                         Chapter {{ $chapter->chapter_number }}
                     </span>
 
@@ -394,12 +598,17 @@
                     </h2>
 
                     <p>
+                        <i class="bi bi-file-earmark-text"></i>
+
                         {{ $chapter->pages->count() }}
+
                         {{ $chapter->pages->count() == 1 ? 'Page' : 'Pages' }}
                     </p>
 
                 </div>
 
+
+                <!-- CHAPTER ACTIONS -->
 
                 <div class="chapter-actions">
 
@@ -407,7 +616,8 @@
                         href="{{ route('books.pages.create', $book->id) }}"
                         class="btn add-page"
                     >
-                        + Add Page
+                        <i class="bi bi-file-earmark-plus"></i>
+                        Add Page
                     </a>
 
 
@@ -415,7 +625,8 @@
                         href="{{ route('books.chapters.edit', [$book->id, $chapter->id]) }}"
                         class="btn edit"
                     >
-                        ✏️ Edit
+                        <i class="bi bi-pencil-square"></i>
+                        Edit
                     </a>
 
 
@@ -429,8 +640,12 @@
                         @csrf
                         @method('DELETE')
 
-                        <button type="submit" class="btn delete">
-                            🗑 Delete
+                        <button
+                            type="submit"
+                            class="btn delete"
+                        >
+                            <i class="bi bi-trash3"></i>
+                            Delete
                         </button>
 
                     </form>
@@ -440,11 +655,13 @@
             </div>
 
 
-            <!-- Pages -->
+            <!-- PAGES -->
+
             <div class="pages-section">
 
                 <div class="pages-title">
-                    📄 Pages in this chapter
+                    <i class="bi bi-files"></i>
+                    Pages in this chapter
                 </div>
 
 
@@ -455,6 +672,7 @@
                         <div class="page-info">
 
                             <div class="page-number">
+                                <i class="bi bi-file-earmark"></i>
                                 Page {{ $page->page_number }}
                             </div>
 
@@ -471,13 +689,16 @@
                         </div>
 
 
+                        <!-- PAGE ACTIONS -->
+
                         <div class="page-actions">
 
                             <a
                                 href="{{ route('books.pages.edit', [$book->id, $page->id]) }}"
                                 class="btn edit"
                             >
-                                ✏️ Edit
+                                <i class="bi bi-pencil-square"></i>
+                                Edit
                             </a>
 
 
@@ -491,8 +712,12 @@
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit" class="btn delete">
-                                    🗑 Delete
+                                <button
+                                    type="submit"
+                                    class="btn delete"
+                                >
+                                    <i class="bi bi-trash3"></i>
+                                    Delete
                                 </button>
 
                             </form>
@@ -505,15 +730,18 @@
 
                     <div class="no-pages">
 
-                        📄 No pages in this chapter yet.
+                        <i class="bi bi-file-earmark-plus"></i>
 
-                        <br><br>
+                        <div class="no-pages-text">
+                            No pages in this chapter yet.
+                        </div>
 
                         <a
                             href="{{ route('books.pages.create', $book->id) }}"
                             class="btn add-page"
                         >
-                            + Add First Page
+                            <i class="bi bi-plus-circle"></i>
+                            Add First Page
                         </a>
 
                     </div>
@@ -526,34 +754,47 @@
 
     @empty
 
+        <!-- NO CHAPTERS -->
+
         <div class="no-chapters">
 
+            <i class="bi bi-journal-x"></i>
+
             <h2>
-                📚 No Chapters Yet
+                No Chapters Yet
             </h2>
 
             <p>
                 This book doesn't have any chapters yet.
             </p>
 
-            <a
-                href="{{ route('books.chapters.create', $book->id) }}"
-                class="bottom-action"
-            >
-                + Create First Chapter
-            </a>
+            <div class="bottom-action">
+
+                <a
+                    href="{{ route('books.chapters.create', $book->id) }}"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                    Create First Chapter
+                </a>
+
+            </div>
 
         </div>
 
     @endforelse
 
 
+    <!-- ADD ANOTHER CHAPTER -->
+
     @if($book->chapters->count() > 0)
 
         <div class="bottom-action">
 
-            <a href="{{ route('books.chapters.create', $book->id) }}">
-                + Add Another Chapter
+            <a
+                href="{{ route('books.chapters.create', $book->id) }}"
+            >
+                <i class="bi bi-plus-circle"></i>
+                Add Another Chapter
             </a>
 
         </div>
@@ -563,4 +804,5 @@
 </main>
 
 </body>
+
 </html>

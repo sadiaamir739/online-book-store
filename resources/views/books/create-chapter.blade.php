@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Add Chapter | {{ $book->title }}</title>
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
 
     <style>
         * {
@@ -17,33 +22,61 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f8;
-            color: #222;
+            background: #f4f6fa;
+            color: #17243d;
             min-height: 100vh;
         }
 
+        /* =========================
+           HEADER
+        ========================== */
+
         .header {
-            background: #222;
+            background: #17243d;
             color: white;
-            padding: 22px 50px;
+            padding: 20px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
+            box-shadow: 0 3px 12px rgba(23, 36, 61, 0.18);
         }
 
         .logo {
-            font-size: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
             font-weight: bold;
         }
 
-        .back-btn {
-            background: white;
-            color: #222;
-            text-decoration: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            font-weight: bold;
+        .logo i {
+            color: #d9a943;
+            font-size: 25px;
         }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #304e78;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 7px;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #d9a943;
+            color: #17243d;
+        }
+
+        /* =========================
+           CONTAINER
+        ========================== */
 
         .container {
             width: 90%;
@@ -51,45 +84,73 @@
             margin: 45px auto;
         }
 
+        /* =========================
+           HEADING
+        ========================== */
+
         .page-heading {
             margin-bottom: 25px;
         }
 
         .page-heading h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 32px;
             margin-bottom: 8px;
+            color: #17243d;
+        }
+
+        .page-heading h1 i {
+            color: #d9a943;
         }
 
         .page-heading p {
-            color: #777;
+            color: #667085;
             font-size: 15px;
         }
+
+        /* =========================
+           BOOK INFO
+        ========================== */
 
         .book-info {
             background: white;
             border-radius: 10px;
             padding: 20px 25px;
             margin-bottom: 25px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-            border-left: 5px solid #222;
+            box-shadow: 0 4px 15px rgba(23, 36, 61, 0.08);
+            border-left: 5px solid #d9a943;
         }
 
         .book-info span {
-            color: #777;
+            color: #667085;
             font-size: 14px;
         }
 
         .book-info strong {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-size: 20px;
-            margin-top: 5px;
+            margin-top: 7px;
+            color: #17243d;
         }
+
+        .book-info strong i {
+            color: #d9a943;
+        }
+
+        /* =========================
+           FORM CARD
+        ========================== */
 
         .form-card {
             background: white;
             border-radius: 12px;
             padding: 35px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 5px 20px rgba(23, 36, 61, 0.08);
+            border: 1px solid #e5e9f0;
         }
 
         .form-group {
@@ -101,6 +162,7 @@
             font-size: 15px;
             font-weight: bold;
             margin-bottom: 9px;
+            color: #17243d;
         }
 
         .required {
@@ -110,26 +172,37 @@
         input {
             width: 100%;
             padding: 14px 15px;
-            border: 1px solid #d0d0d0;
+            border: 1px solid #ccd3df;
             border-radius: 7px;
             font-size: 15px;
             outline: none;
+            color: #17243d;
+            background: #fff;
+            transition: 0.2s ease;
         }
 
         input:focus {
-            border-color: #222;
-            box-shadow: 0 0 0 2px rgba(34, 34, 34, 0.08);
+            border-color: #304e78;
+            box-shadow: 0 0 0 3px rgba(48, 78, 120, 0.12);
+        }
+
+        input::placeholder {
+            color: #9aa3b2;
         }
 
         .help-text {
-            color: #888;
+            color: #7b8494;
             font-size: 13px;
             margin-top: 7px;
         }
 
+        /* =========================
+           ERRORS
+        ========================== */
+
         .errors {
-            background: #fff0f0;
-            border: 1px solid #f0b5b5;
+            background: #fff5f5;
+            border: 1px solid #efb5b5;
             color: #a51f1f;
             padding: 15px 18px;
             border-radius: 7px;
@@ -137,8 +210,10 @@
         }
 
         .errors strong {
-            display: block;
-            margin-bottom: 7px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 8px;
         }
 
         .errors ul {
@@ -149,15 +224,23 @@
             margin-bottom: 4px;
         }
 
+        /* =========================
+           FORM ACTIONS
+        ========================== */
+
         .form-actions {
             display: flex;
             justify-content: flex-end;
             gap: 12px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+            padding-top: 20px;
+            border-top: 1px solid #e7eaf0;
         }
 
         .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             padding: 12px 22px;
             border-radius: 7px;
             text-decoration: none;
@@ -165,27 +248,50 @@
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.2s ease;
         }
 
         .cancel-btn {
-            background: #eee;
-            color: #333;
+            background: #eef1f5;
+            color: #17243d;
+            border: 1px solid #dce1e8;
+        }
+
+        .cancel-btn:hover {
+            background: #dfe4eb;
         }
 
         .save-btn {
-            background: #222;
+            background: #304e78;
             color: white;
         }
+
+        .save-btn:hover {
+            background: #17243d;
+        }
+
+        .save-btn i {
+            color: #d9a943;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
 
         @media (max-width: 700px) {
 
             .header {
-                padding: 20px;
-                gap: 15px;
+                padding: 18px 20px;
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .logo {
                 font-size: 20px;
+            }
+
+            .back-btn {
+                justify-content: center;
             }
 
             .container {
@@ -207,7 +313,6 @@
 
             .btn {
                 width: 100%;
-                text-align: center;
             }
         }
     </style>
@@ -218,20 +323,31 @@
 <header class="header">
 
     <div class="logo">
-        📚 Online Book Store
+        <i class="bi bi-book-half"></i>
+        <span>Online Book Store</span>
     </div>
 
-    <a href="{{ route('books.chapters', $book->id) }}" class="back-btn">
-        ← Back to Chapters
+    <a
+        href="{{ route('books.chapters', $book->id) }}"
+        class="back-btn"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back to Chapters
     </a>
 
 </header>
 
+
 <main class="container">
+
+    <!-- PAGE HEADING -->
 
     <div class="page-heading">
 
-        <h1>➕ Add New Chapter</h1>
+        <h1>
+            <i class="bi bi-plus-circle"></i>
+            Add New Chapter
+        </h1>
 
         <p>
             Create a new chapter for your book.
@@ -239,15 +355,22 @@
 
     </div>
 
+
+    <!-- BOOK INFORMATION -->
+
     <div class="book-info">
 
         <span>Adding chapter to:</span>
 
         <strong>
-            📖 {{ $book->title }}
+            <i class="bi bi-book"></i>
+            {{ $book->title }}
         </strong>
 
     </div>
+
+
+    <!-- FORM -->
 
     <div class="form-card">
 
@@ -256,6 +379,7 @@
             <div class="errors">
 
                 <strong>
+                    <i class="bi bi-exclamation-triangle"></i>
                     Please fix the following errors:
                 </strong>
 
@@ -273,6 +397,7 @@
 
         @endif
 
+
         <form
             action="{{ route('books.chapters.store', $book->id) }}"
             method="POST"
@@ -280,7 +405,8 @@
 
             @csrf
 
-            <!-- Chapter Number -->
+
+            <!-- CHAPTER NUMBER -->
 
             <div class="form-group">
 
@@ -306,7 +432,7 @@
             </div>
 
 
-            <!-- Chapter Title -->
+            <!-- CHAPTER TITLE -->
 
             <div class="form-group">
 
@@ -331,12 +457,15 @@
             </div>
 
 
+            <!-- ACTION BUTTONS -->
+
             <div class="form-actions">
 
                 <a
                     href="{{ route('books.chapters', $book->id) }}"
                     class="btn cancel-btn"
                 >
+                    <i class="bi bi-x-circle"></i>
                     Cancel
                 </a>
 
@@ -344,7 +473,8 @@
                     type="submit"
                     class="btn save-btn"
                 >
-                    💾 Create Chapter
+                    <i class="bi bi-check-circle"></i>
+                    Create Chapter
                 </button>
 
             </div>
@@ -358,5 +488,3 @@
 </body>
 
 </html>
-
-
