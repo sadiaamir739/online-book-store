@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
@@ -28,10 +27,14 @@ class RegisterController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user);
+        $request->session()->put([
+            'otp.email' => $user->email,
+            'otp.purpose' => 'registration',
+            'otp.remember' => false,
+        ]);
 
-        $request->session()->regenerate();
+        EmailVerificationController::sendCode($user->email, 'registration');
 
-        return redirect()->intended('/admin/dashboard');
+        return redirect()->route('otp.show')->with('status', 'A verification code has been sent to your email.');
     }
 }

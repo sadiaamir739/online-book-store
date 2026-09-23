@@ -11,11 +11,20 @@ class Book extends Model
     protected $fillable = [
         'title',
         'author',
+        'language',
         'description',
         'price',
         'cover_image',
         'category_id',
+        'published',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'published' => 'boolean',
+        ];
+    }
 
     public function category(): BelongsTo
     {

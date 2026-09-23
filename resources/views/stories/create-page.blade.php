@@ -480,12 +480,14 @@
 
 <body>
 
+    @include('partials.navbar')
+
 
     <!-- =========================
          NAVBAR
     ========================== -->
 
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ url('/') }}" class="logo">
 

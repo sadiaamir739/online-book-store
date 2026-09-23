@@ -296,8 +296,10 @@
 
 <body>
 
+    @include('partials.navbar')
+
     <!-- NAVBAR -->
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ route('home') }}" class="logo">
             <i class="bi bi-book-half"></i>
@@ -400,6 +402,13 @@
                         <i class="bi bi-person"></i>
                         By {{ $book->author }}
                     </p>
+
+                    @if($book->language)
+                        <span class="category">
+                            <i class="bi bi-translate"></i>
+                            {{ $book->language }}
+                        </span>
+                    @endif
 
                     @if($book->category)
 

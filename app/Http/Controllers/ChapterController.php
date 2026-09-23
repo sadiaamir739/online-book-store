@@ -130,13 +130,23 @@ class ChapterController extends Controller
     | Read Chapter
     |--------------------------------------------------------------------------
     */
-    public function read($bookId, $chapterId)
+    public function read(Request $request, $bookId, $chapterId)
     {
         $book = Book::findOrFail($bookId);
 
         $chapter = Chapter::with('pages')
             ->where('book_id', $bookId)
             ->findOrFail($chapterId);
+
+        $pages = $chapter->pages;
+        $pageNumber = max(1, $request->integer('page', 1));
+        $page = $pages->firstWhere('page_number', $pageNumber) ?? $pages->first();
+        $previousPage = $page
+            ? $pages->where('page_number', '<', $page->page_number)->sortByDesc('page_number')->first()
+            : null;
+        $nextPage = $page
+            ? $pages->where('page_number', '>', $page->page_number)->sortBy('page_number')->first()
+            : null;
 
         /*
         |--------------------------------------------------------------------------
@@ -163,6 +173,9 @@ class ChapterController extends Controller
             compact(
                 'book',
                 'chapter',
+                'page',
+                'previousPage',
+                'nextPage',
                 'previousChapter',
                 'nextChapter'
             )

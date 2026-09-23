@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -14,7 +15,13 @@ class BookController extends Controller
 
     public function index()
     {
-        $books = Book::with('category')->get();
+        $query = Book::with('category');
+
+        if (!Auth::user()?->is_admin) {
+            $query->where('published', true);
+        }
+
+        $books = $query->get();
 
         return view('books.index', compact('books'));
     }
@@ -28,6 +35,10 @@ class BookController extends Controller
     {
         $book = Book::with('chapters.pages')
             ->findOrFail($id);
+
+        if (!$book->published && !Auth::user()?->is_admin) {
+            abort(404);
+        }
 
         return view('books.read', compact('book'));
     }
@@ -54,6 +65,7 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required',
             'author' => 'required',
+            'language' => 'required|in:English,Urdu',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric',
             'description' => 'nullable',
@@ -70,10 +82,12 @@ class BookController extends Controller
         Book::create([
             'title' => $request->title,
             'author' => $request->author,
+            'language' => $request->language,
             'category_id' => $request->category_id,
             'price' => $request->price,
             'description' => $request->description,
             'cover_image' => $coverImage,
+            'published' => Auth::user()?->is_admin ?? false,
         ]);
 
         return redirect()
@@ -104,6 +118,7 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required',
             'author' => 'required',
+            'language' => 'required|in:English,Urdu',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric',
             'description' => 'nullable',
@@ -122,6 +137,7 @@ class BookController extends Controller
         $book->update([
             'title' => $request->title,
             'author' => $request->author,
+            'language' => $request->language,
             'category_id' => $request->category_id,
             'price' => $request->price,
             'description' => $request->description,
@@ -147,6 +163,16 @@ class BookController extends Controller
         return redirect()
             ->route('books.index')
             ->with('success', 'Book deleted successfully');
+    }
+
+    public function approve($id)
+    {
+        $book = Book::findOrFail($id);
+        $book->update(['published' => true]);
+
+        return redirect()
+            ->route('books.index')
+            ->with('success', 'Book approved successfully');
     }
 }
 

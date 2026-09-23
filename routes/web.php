@@ -9,8 +9,11 @@ use App\Http\Controllers\StoryController;
 use App\Http\Controllers\BookPageController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PoemController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\EmailVerificationController;
 
 
 // =====================================================
@@ -25,14 +28,32 @@ Route::get('/login', [LoginController::class, 'showLogin'])
 Route::post('/login', [LoginController::class, 'login'])
     ->name('login.submit');
 
-
-// REGISTER
-
 Route::get('/register', [RegisterController::class, 'showRegister'])
     ->name('register');
 
 Route::post('/register', [RegisterController::class, 'register'])
     ->name('register.submit');
+
+Route::get('/verify-otp', [EmailVerificationController::class, 'show'])
+    ->name('otp.show');
+
+Route::post('/verify-otp', [EmailVerificationController::class, 'verify'])
+    ->name('otp.verify');
+
+Route::post('/verify-otp/resend', [EmailVerificationController::class, 'resend'])
+    ->name('otp.resend');
+
+Route::get('/forgot-password', [PasswordResetController::class, 'request'])
+    ->name('password.request');
+
+Route::post('/forgot-password', [PasswordResetController::class, 'email'])
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'reset'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [PasswordResetController::class, 'update'])
+    ->name('password.update');
 
 
 // =====================================================
@@ -40,6 +61,10 @@ Route::post('/register', [RegisterController::class, 'register'])
 // =====================================================
 
 Route::get('/', function () {
+    if (Auth::check() && Auth::user()->is_admin) {
+        return redirect()->route('admin.dashboard');
+    }
+
     return view('welcome');
 })->name('home');
 
@@ -69,6 +94,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])
         ->name('profile');
 
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
 });
 
 
@@ -95,9 +126,9 @@ Route::get('/categories', [CategoryController::class, 'index'])
     ->name('categories.index');
 
 
-// ADMIN - CATEGORY MANAGEMENT
+// CATEGORY MANAGEMENT
 
-Route::middleware(['auth', 'can:admin'])->group(function () {
+Route::middleware('auth')->group(function () {
 
     // CREATE CATEGORY
 
@@ -107,7 +138,6 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
 
     // STORE CATEGORY
-
     Route::post('/categories',
         [CategoryController::class, 'store']
     )->name('categories.store');
@@ -125,7 +155,6 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::put('/categories/{category}',
         [CategoryController::class, 'update']
     )->name('categories.update');
-
 
     // DELETE CATEGORY
 
@@ -153,22 +182,24 @@ Route::get('/books/{book}/read',
 )->name('books.read');
 
 
-// ADMIN - BOOK MANAGEMENT
+// ADMIN - BOOK CREATION
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
-
-    // CREATE BOOK
 
     Route::get('/books/create',
         [BookController::class, 'create']
     )->name('books.create');
 
-
-    // STORE BOOK
-
     Route::post('/books',
         [BookController::class, 'store']
     )->name('books.store');
+
+});
+
+
+// ADMIN - BOOK MANAGEMENT
+
+Route::middleware(['auth', 'can:admin'])->group(function () {
 
 
     // EDIT BOOK
@@ -190,6 +221,10 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::delete('/books/{book}',
         [BookController::class, 'destroy']
     )->name('books.destroy');
+
+    Route::post('/books/{book}/approve',
+        [BookController::class, 'approve']
+    )->name('books.approve');
 
 });
 
@@ -307,6 +342,40 @@ Route::get('/books/{book}/chapters/{chapter}/read',
 // STORIES
 // =====================================================
 
+// =====================================================
+// POETRY
+// =====================================================
+
+Route::get('/poems', [PoemController::class, 'index'])
+    ->name('poems.index');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/poems/create', [PoemController::class, 'create'])
+        ->name('poems.create');
+
+    Route::post('/poems', [PoemController::class, 'store'])
+        ->name('poems.store');
+
+    Route::get('/poems/{poem}/edit', [PoemController::class, 'edit'])
+        ->name('poems.edit');
+
+    Route::put('/poems/{poem}', [PoemController::class, 'update'])
+        ->name('poems.update');
+
+    Route::delete('/poems/{poem}', [PoemController::class, 'destroy'])
+        ->name('poems.destroy');
+});
+
+Route::get('/poems/{poem}', [PoemController::class, 'show'])
+    ->name('poems.show');
+
+Route::middleware(['auth', 'can:admin'])->post('/poems/{poem}/approve', [PoemController::class, 'approve'])
+    ->name('poems.approve');
+
+// =====================================================
+// STORIES
+// =====================================================
+
 // PUBLIC - VIEW STORIES LIST
 
 Route::get('/stories',
@@ -315,26 +384,27 @@ Route::get('/stories',
 
 
 // =====================================================
-// ADMIN - STORY MANAGEMENT
+// USER - UPLOAD STORIES
 // =====================================================
 
-Route::middleware(['auth', 'can:admin'])->group(function () {
-
-    // IMPORTANT:
-    // /stories/create MUST come before /stories/{story}
-
-    // CREATE STORY
+Route::middleware('auth')->group(function () {
 
     Route::get('/stories/create',
         [StoryController::class, 'create']
     )->name('stories.create');
 
-
-    // STORE STORY
-
     Route::post('/stories',
         [StoryController::class, 'store']
     )->name('stories.store');
+
+});
+
+
+// =====================================================
+// ADMIN - STORY MANAGEMENT
+// =====================================================
+
+Route::middleware('auth')->group(function () {
 
 
     // EDIT STORY
@@ -356,6 +426,16 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::delete('/stories/{story}',
         [StoryController::class, 'destroy']
     )->name('stories.destroy');
+
+});
+
+// ADMIN - STORY APPROVAL AND PAGE MANAGEMENT
+
+Route::middleware(['auth', 'can:admin'])->group(function () {
+
+    Route::post('/stories/{story}/approve',
+        [StoryController::class, 'approve']
+    )->name('stories.approve');
 
 
     // =================================================

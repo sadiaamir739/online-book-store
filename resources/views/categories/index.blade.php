@@ -611,12 +611,14 @@
 
 <body>
 
+    @include('partials.navbar')
+
 
     <!-- =========================
          NAVBAR
     ========================== -->
 
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ url('/') }}" class="logo">
 
@@ -719,30 +721,20 @@
 
     @auth
 
-        @if(auth()->user()->is_admin)
-
             <div class="admin-bar">
 
                 <div class="admin-info">
 
-                    <i class="bi bi-shield-lock"></i>
+                    <i class="bi bi-folder-plus"></i>
 
                     <span>
-                        Category Management
+                        Category Options
                     </span>
 
                 </div>
 
 
                 <div class="admin-actions">
-
-                    <a
-                        href="{{ route('admin.dashboard') }}"
-                        class="admin-btn dashboard-btn"
-                    >
-                        <i class="bi bi-speedometer2"></i>
-                        Admin Dashboard
-                    </a>
 
                     <a
                         href="{{ route('categories.create') }}"
@@ -752,11 +744,19 @@
                         Add Category
                     </a>
 
+                    @if(auth()->user()->is_admin)
+                        <a
+                            href="{{ route('admin.dashboard') }}"
+                            class="admin-btn dashboard-btn"
+                        >
+                            <i class="bi bi-speedometer2"></i>
+                            Admin Dashboard
+                        </a>
+                    @endif
+
                 </div>
 
             </div>
-
-        @endif
 
     @endauth
 
@@ -852,7 +852,7 @@
 
                         @auth
 
-                            @if(auth()->user()->is_admin)
+                            @if(auth()->user()->is_admin || $category->user_id === auth()->id())
 
                                 <div class="category-actions">
 
@@ -932,8 +932,6 @@
 
                 @auth
 
-                    @if(auth()->user()->is_admin)
-
                         <a
                             href="{{ route('categories.create') }}"
                             class="admin-btn add-btn"
@@ -941,8 +939,6 @@
                             <i class="bi bi-plus-circle"></i>
                             Add First Category
                         </a>
-
-                    @endif
 
                 @endauth
 

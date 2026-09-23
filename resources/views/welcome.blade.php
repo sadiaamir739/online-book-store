@@ -839,12 +839,14 @@
 
 <body>
 
+    @include('partials.navbar')
+
 
 <!-- =========================================
      NAVBAR
 ========================================== -->
 
-<nav class="navbar">
+<nav class="navbar legacy-navbar">
 
     <a href="{{ url('/') }}" class="logo">
 
@@ -881,6 +883,19 @@
 
 
         @auth
+
+            @if (!auth()->user()->is_admin)
+                <a href="{{ route('stories.create') }}">
+                    <i class="bi bi-pencil-square"></i>
+                    Add Story
+                </a>
+
+                <a href="{{ route('categories.create') }}">
+                    <i class="bi bi-tags"></i>
+                    Add Category
+                </a>
+
+            @endif
 
             <a
                 href="{{ route('profile') }}"
@@ -2091,5 +2106,3 @@
 
 
 </body>
-
-</html>

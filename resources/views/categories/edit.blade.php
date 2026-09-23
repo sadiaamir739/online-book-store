@@ -302,11 +302,13 @@
 
 <body>
 
+    @include('partials.navbar')
+
     <!-- =========================
          NAVBAR
     ========================= -->
 
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ route('home') }}" class="logo">
             Online Book Store

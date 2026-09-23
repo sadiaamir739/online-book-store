@@ -17,6 +17,13 @@ class Story extends Model
         'user_id',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'published' => 'boolean',
+        ];
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);

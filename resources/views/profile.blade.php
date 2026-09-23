@@ -121,6 +121,13 @@
             border: 4px solid #f6e8c6;
         }
 
+        .profile-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
         .profile-title h1 {
             font-size: 34px;
             color: #17243d;
@@ -161,6 +168,72 @@
         .info-icon {
             color: #d9a943;
             margin-right: 7px;
+        }
+
+        .profile-form {
+            margin-top: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: #17243d;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d5dce7;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 22px;
+        }
+
+        .form-btn {
+            border: 0;
+            cursor: pointer;
+            font: inherit;
+            font-weight: bold;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .save-btn {
+            background: #17243d;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #e9edf3;
+            color: #17243d;
+        }
+
+        .success-message {
+            background: #edf8f1;
+            border: 1px solid #a9d8b8;
+            color: #247343;
+            padding: 13px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: #b42318;
+            font-size: 13px;
+            margin-top: 6px;
         }
 
         /* ================= BACK BUTTON ================= */
@@ -240,9 +313,11 @@
 
 <body>
 
+    @include('partials.navbar')
+
     <!-- ================= NAVBAR ================= -->
 
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <div class="logo">
             <i class="bi bi-book-half"></i>
@@ -296,7 +371,11 @@
             <div class="profile-title">
 
                 <div class="profile-icon">
-                    <i class="bi bi-person-fill"></i>
+                    @if($user->profile_photo)
+                        <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="{{ $user->name }}" class="profile-photo">
+                    @else
+                        <i class="bi bi-person-fill"></i>
+                    @endif
                 </div>
 
                 <h1>My Profile</h1>
@@ -306,6 +385,44 @@
                 </p>
 
             </div>
+
+            @if(session('success'))
+                <div class="success-message">
+                    <i class="bi bi-check-circle-fill"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if($editing)
+                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="profile-form">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
+                        @error('name')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profile_photo">Profile Picture</label>
+                        <input type="file" id="profile_photo" name="profile_photo" class="form-control" accept="image/jpeg,image/png,image/webp">
+                        @error('profile_photo')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="form-btn save-btn">
+                            <i class="bi bi-check-lg"></i>
+                            Save Changes
+                        </button>
+                        <a href="{{ route('profile') }}" class="form-btn cancel-btn">Cancel</a>
+                    </div>
+                </form>
+            @else
 
 
             <div class="profile-info">
@@ -358,6 +475,15 @@
                 </div>
 
             </div>
+
+            <div class="back-wrapper">
+                <a href="{{ route('profile.edit') }}" class="back-btn">
+                    <i class="bi bi-pencil"></i>
+                    Edit Profile
+                </a>
+            </div>
+
+            @endif
 
 
             <!-- BACK BUTTON -->

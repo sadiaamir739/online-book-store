@@ -93,7 +93,7 @@
 
         .input-box input {
             width: 100%;
-            padding: 13px 14px 13px 44px;
+            padding: 13px 44px 13px 44px;
             border: 1px solid #d9dce3;
             border-radius: 10px;
             outline: none;
@@ -104,6 +104,24 @@
         .input-box input:focus {
             border-color: #d9a943;
             box-shadow: 0 0 0 3px rgba(217, 169, 67, 0.15);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: #777;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .toggle-password i {
+            position: static;
+            transform: none;
+            font-size: 17px;
         }
 
         .error {
@@ -278,6 +296,10 @@
                             required
                         >
 
+                        <button type="button" class="toggle-password" data-target="password" aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+
                     </div>
 
                 </div>
@@ -300,6 +322,10 @@
                             placeholder="Confirm your password"
                             required
                         >
+
+                        <button type="button" class="toggle-password" data-target="password_confirmation" aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
 
                     </div>
 
@@ -339,6 +365,19 @@
         </div>
 
     </div>
+
+    <script>
+        document.querySelectorAll('.toggle-password').forEach((button) => {
+            button.addEventListener('click', () => {
+                const input = document.getElementById(button.dataset.target);
+                const isVisible = input.type === 'text';
+
+                input.type = isVisible ? 'password' : 'text';
+                button.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+                button.querySelector('i').className = isVisible ? 'bi bi-eye' : 'bi bi-eye-slash';
+            });
+        });
+    </script>
 
 </body>
 

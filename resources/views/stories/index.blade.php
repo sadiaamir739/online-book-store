@@ -767,11 +767,13 @@
 
 <body>
 
+    @include('partials.navbar')
+
     <!-- =========================
          NAVBAR
     ========================== -->
 
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ url('/') }}" class="logo">
 
@@ -866,27 +868,27 @@
 
     @auth
 
-        @if(auth()->user()->is_admin)
-
             <div class="admin-bar">
 
                 <div class="admin-title">
 
-                    <i class="bi bi-shield-lock"></i>
+                    <i class="bi bi-journal-plus"></i>
 
-                    Story Management
+                    Story Options
 
                 </div>
 
                 <div class="admin-actions">
 
-                    <a
-                        href="{{ route('admin.dashboard') }}"
-                        class="admin-btn dashboard-btn"
-                    >
-                        <i class="bi bi-speedometer2"></i>
-                        Admin Dashboard
-                    </a>
+                    @if(auth()->user()->is_admin)
+                        <a
+                            href="{{ route('admin.dashboard') }}"
+                            class="admin-btn dashboard-btn"
+                        >
+                            <i class="bi bi-speedometer2"></i>
+                            Admin Dashboard
+                        </a>
+                    @endif
 
                     <a
                         href="{{ route('stories.create') }}"
@@ -899,8 +901,6 @@
                 </div>
 
             </div>
-
-        @endif
 
     @endauth
 
@@ -1079,7 +1079,7 @@
 
                         @auth
 
-                            @if(auth()->user()->is_admin)
+                            @if(auth()->user()->is_admin || $story->user_id === auth()->id())
 
                                 <div class="admin-actions-card">
 
@@ -1094,19 +1094,36 @@
 
                                     <div class="story-admin-buttons">
 
+                                        @if(auth()->user()->is_admin && !$story->published)
+
+                                            <form
+                                                action="{{ route('stories.approve', $story->id) }}"
+                                                method="POST"
+                                            >
+                                                @csrf
+                                                <button type="submit" class="story-admin-btn edit-btn" style="width:100%;">
+                                                    <i class="bi bi-check-circle"></i>
+                                                    Approve
+                                                </button>
+                                            </form>
+
+                                        @endif
+
 
                                         <!-- MANAGE PAGES -->
 
-                                        <a
-                                            href="{{ route('stories.pages', $story->id) }}"
-                                            class="story-admin-btn manage-btn"
-                                        >
+                                        @if(auth()->user()->is_admin)
+                                            <a
+                                                href="{{ route('stories.pages', $story->id) }}"
+                                                class="story-admin-btn manage-btn"
+                                            >
 
-                                            <i class="bi bi-files"></i>
+                                                <i class="bi bi-files"></i>
 
-                                            Manage Pages
+                                                Manage Pages
 
-                                        </a>
+                                            </a>
+                                        @endif
 
 
                                         <!-- EDIT -->

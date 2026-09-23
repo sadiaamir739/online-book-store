@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -32,6 +33,7 @@ class CategoryController extends Controller
         Category::create([
             'name' => $request->name,
             'description' => $request->description,
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()
@@ -43,6 +45,7 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::findOrFail($id);
+        $this->authorizeCategory($category);
 
         return view('categories.edit', compact('category'));
     }
@@ -56,6 +59,7 @@ class CategoryController extends Controller
         ]);
 
         $category = Category::findOrFail($id);
+        $this->authorizeCategory($category);
 
         $category->update([
             'name' => $request->name,
@@ -71,11 +75,21 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
+        $this->authorizeCategory($category);
 
         $category->delete();
 
         return redirect()
             ->route('categories.index')
             ->with('success', 'Category deleted successfully!');
+    }
+
+    private function authorizeCategory(Category $category): void
+    {
+        $user = Auth::user();
+
+        if (! $user || (! $user->is_admin && $category->user_id !== $user->id)) {
+            abort(403, 'You are not allowed to modify this category.');
+        }
     }
 }

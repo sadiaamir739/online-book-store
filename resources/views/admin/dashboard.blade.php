@@ -494,6 +494,13 @@
             </li>
 
             <li>
+                <a href="{{ route('books.create') }}">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Add Book</span>
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('stories.index') }}">
                     <i class="bi bi-journal-text"></i>
                     <span>Stories</span>
@@ -501,9 +508,23 @@
             </li>
 
             <li>
+                <a href="{{ route('stories.create') }}">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Add Story</span>
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('categories.index') }}">
                     <i class="bi bi-tags"></i>
                     <span>Categories</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('categories.create') }}">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Add Category</span>
                 </a>
             </li>
 

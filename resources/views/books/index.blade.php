@@ -645,11 +645,13 @@
 
 <body>
 
+    @include('partials.navbar')
+
     <!-- =========================
          NAVBAR
     ========================== -->
 
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ url('/') }}" class="logo">
 
@@ -881,6 +883,13 @@
 
                         </div>
 
+                        @if($book->language)
+                            <span class="category">
+                                <i class="bi bi-translate"></i>
+                                {{ $book->language }}
+                            </span>
+                        @endif
+
 
                         @if($book->category)
 
@@ -939,6 +948,21 @@
                             @if(auth()->user()->is_admin)
 
                                 <div class="admin-book-actions">
+
+                                    @unless($book->published)
+
+                                        <form
+                                            action="{{ route('books.approve', $book->id) }}"
+                                            method="POST"
+                                        >
+                                            @csrf
+                                            <button type="submit" class="edit-btn" style="width:100%;">
+                                                <i class="bi bi-check-circle"></i>
+                                                Approve
+                                            </button>
+                                        </form>
+
+                                    @endunless
 
                                     <!-- PAGES -->
 

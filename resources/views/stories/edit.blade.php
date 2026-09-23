@@ -422,11 +422,13 @@
 
 <body>
 
+    @include('partials.navbar')
+
     <!-- ================================
          NAVBAR
     ================================= -->
 
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ route('home') }}" class="brand">
             <i class="bi bi-book-half"></i>

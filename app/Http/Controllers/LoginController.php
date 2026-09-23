@@ -14,16 +14,25 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        $request->merge([
+            'email' => strtolower(trim($request->input('email', ''))),
+        ]);
+
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::validate($credentials)) {
+            $request->session()->put([
+                'otp.email' => $credentials['email'],
+                'otp.purpose' => 'login',
+                'otp.remember' => $request->boolean('remember'),
+            ]);
 
-            $request->session()->regenerate();
+            EmailVerificationController::sendCode($credentials['email'], 'login');
 
-            return redirect()->intended('/admin/dashboard');
+            return redirect()->route('otp.show')->with('status', 'A verification code has been sent to your email.');
         }
 
         return back()->withErrors([

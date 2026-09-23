@@ -235,8 +235,10 @@
 
 <body>
 
+    @include('partials.navbar')
+
     <!-- NAVBAR -->
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ route('home') }}" class="logo">
             <i class="bi bi-book-half"></i>
@@ -331,11 +333,9 @@
 
 
             <!-- PAGES -->
-            @if($chapter->pages->count() > 0)
+            @if($page)
 
-                @foreach($chapter->pages as $page)
-
-                    <div class="page">
+                <div class="page">
 
                         <div class="page-number">
                             Page {{ $page->page_number }}
@@ -353,9 +353,7 @@
                             {{ $page->content }}
                         </div>
 
-                    </div>
-
-                @endforeach
+                </div>
 
             @else
 
@@ -369,6 +367,34 @@
 
                 </div>
 
+            @endif
+
+            @if($page)
+                <div class="navigation">
+                    @if($previousPage)
+                        <a href="{{ route('books.chapters.read', [$book->id, $chapter->id, 'page' => $previousPage->page_number]) }}" class="nav-btn">
+                            <i class="bi bi-arrow-left"></i>
+                            Previous Page
+                        </a>
+                    @else
+                        <span class="nav-btn disabled">
+                            <i class="bi bi-arrow-left"></i>
+                            Previous Page
+                        </span>
+                    @endif
+
+                    @if($nextPage)
+                        <a href="{{ route('books.chapters.read', [$book->id, $chapter->id, 'page' => $nextPage->page_number]) }}" class="nav-btn">
+                            Next Page
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    @else
+                        <span class="nav-btn disabled">
+                            Next Page
+                            <i class="bi bi-arrow-right"></i>
+                        </span>
+                    @endif
+                </div>
             @endif
 
 

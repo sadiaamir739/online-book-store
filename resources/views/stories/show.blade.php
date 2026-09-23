@@ -228,6 +228,36 @@
             margin-bottom: 15px;
         }
 
+        .page-navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid #e2e5eb;
+        }
+
+        .page-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 18px;
+            border-radius: 7px;
+            text-decoration: none;
+            background: #17243d;
+            color: white;
+        }
+
+        .page-nav-btn:hover {
+            background: #203758;
+        }
+
+        .page-nav-btn.disabled {
+            background: #dfe3e9;
+            color: #888;
+            pointer-events: none;
+        }
+
         /* ADMIN / OWNER BUTTONS */
         .manage-buttons {
             display: flex;
@@ -252,6 +282,20 @@
 
         .manage-btn:hover {
             background: #203758;
+        }
+
+        .manage-form {
+            display: inline;
+        }
+
+        .delete-manage-btn {
+            border: 0;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .delete-manage-btn:hover {
+            background: #a83232;
         }
 
         /* MOBILE */
@@ -293,14 +337,24 @@
                 font-size: 16px;
                 line-height: 1.9;
             }
+
+            .page-navigation {
+                flex-direction: column;
+            }
+
+            .page-nav-btn {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 
 <body>
 
+    @include('partials.navbar')
+
     <!-- NAVBAR -->
-    <nav class="navbar">
+    <nav class="navbar legacy-navbar">
 
         <a href="{{ route('home') }}" class="logo">
             <i class="bi bi-book-half"></i>
@@ -451,11 +505,9 @@
             </div>
 
 
-            @if($story->pages->count() > 0)
+            @if($page)
 
-                @foreach($story->pages as $page)
-
-                    <div class="page">
+                <div class="page">
 
                         <div class="page-number">
                             Page {{ $page->page_number }}
@@ -475,9 +527,7 @@
                             {{ $page->content }}
                         </div>
 
-                    </div>
-
-                @endforeach
+                </div>
 
             @else
 
@@ -493,6 +543,34 @@
 
             @endif
 
+            @if($page)
+                <div class="page-navigation">
+                    @if($previousPage)
+                        <a href="{{ route('stories.show', [$story->id, 'page' => $previousPage->page_number]) }}" class="page-nav-btn">
+                            <i class="bi bi-arrow-left"></i>
+                            Previous Page
+                        </a>
+                    @else
+                        <span class="page-nav-btn disabled">
+                            <i class="bi bi-arrow-left"></i>
+                            Previous Page
+                        </span>
+                    @endif
+
+                    @if($nextPage)
+                        <a href="{{ route('stories.show', [$story->id, 'page' => $nextPage->page_number]) }}" class="page-nav-btn">
+                            Next Page
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    @else
+                        <span class="page-nav-btn disabled">
+                            Next Page
+                            <i class="bi bi-arrow-right"></i>
+                        </span>
+                    @endif
+                </div>
+            @endif
+
 
             <!-- MANAGEMENT BUTTONS -->
             @auth
@@ -501,21 +579,23 @@
 
                     <div class="manage-buttons">
 
-                        <a
-                            href="{{ route('stories.pages', $story->id) }}"
-                            class="manage-btn"
-                        >
-                            <i class="bi bi-files"></i>
-                            Manage Pages
-                        </a>
+                        @if(Auth::user()->is_admin)
+                            <a
+                                href="{{ route('stories.pages', $story->id) }}"
+                                class="manage-btn"
+                            >
+                                <i class="bi bi-files"></i>
+                                Manage Pages
+                            </a>
 
-                        <a
-                            href="{{ route('stories.pages.create', $story->id) }}"
-                            class="manage-btn"
-                        >
-                            <i class="bi bi-plus-circle"></i>
-                            Add Page
-                        </a>
+                            <a
+                                href="{{ route('stories.pages.create', $story->id) }}"
+                                class="manage-btn"
+                            >
+                                <i class="bi bi-plus-circle"></i>
+                                Add Page
+                            </a>
+                        @endif
 
                         <a
                             href="{{ route('stories.edit', $story->id) }}"
@@ -524,6 +604,20 @@
                             <i class="bi bi-pencil"></i>
                             Edit Story
                         </a>
+
+                        <form
+                            action="{{ route('stories.destroy', $story->id) }}"
+                            method="POST"
+                            class="manage-form"
+                            onsubmit="return confirm('Are you sure you want to delete this story?');"
+                        >
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="manage-btn delete-manage-btn">
+                                <i class="bi bi-trash3"></i>
+                                Delete Story
+                            </button>
+                        </form>
 
                     </div>
 

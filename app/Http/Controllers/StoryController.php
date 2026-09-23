@@ -13,19 +13,43 @@ class StoryController extends Controller
     // Show all stories
     public function index()
     {
-        $stories = Story::with('category', 'user')
-            ->latest()
-            ->get();
+        $query = Story::with('category', 'user')->latest();
+
+        if (!Auth::user()?->is_admin) {
+            $query->where('published', true);
+        }
+
+        $stories = $query->get();
 
         return view('stories.index', compact('stories'));
     }
 
     // Show single story
-    public function show(Story $story)
+    public function show(Request $request, Story $story)
     {
-        $story->load('category', 'user', 'pages');
+        if (
+            !$story->published &&
+            (!Auth::check() || (!Auth::user()->is_admin && $story->user_id !== Auth::id()))
+        ) {
+            abort(404);
+        }
 
-        return view('stories.show', compact('story'));
+        $story->load('category', 'user');
+
+        $pages = $story->pages()
+            ->orderBy('page_number')
+            ->get();
+
+        $pageNumber = max(1, $request->integer('page', 1));
+        $page = $pages->firstWhere('page_number', $pageNumber) ?? $pages->first();
+        $previousPage = $page
+            ? $pages->where('page_number', '<', $page->page_number)->sortByDesc('page_number')->first()
+            : null;
+        $nextPage = $page
+            ? $pages->where('page_number', '>', $page->page_number)->sortBy('page_number')->first()
+            : null;
+
+        return view('stories.show', compact('story', 'pages', 'page', 'previousPage', 'nextPage'));
     }
 
     // Show create story form
@@ -62,7 +86,7 @@ class StoryController extends Controller
             'language' => $request->language,
             'cover_image' => $coverImage,
             'description' => $request->description,
-            'published' => false,
+            'published' => Auth::user()?->is_admin ?? false,
             'user_id' => Auth::id(),
         ]);
 
@@ -234,5 +258,14 @@ class StoryController extends Controller
         ) {
             abort(403, 'You are not allowed to modify this story.');
         }
+    }
+
+    public function approve(Story $story)
+    {
+        $story->update(['published' => true]);
+
+        return redirect()
+            ->route('stories.index')
+            ->with('success', 'Story approved successfully!');
     }
 }
