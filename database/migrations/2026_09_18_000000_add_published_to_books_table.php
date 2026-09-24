@@ -8,15 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->boolean('published')->default(true)->after('category_id');
-        });
+        if (!Schema::hasColumn('books', 'published')) {
+            Schema::table('books', function (Blueprint $table) {
+                $table->boolean('published')
+                    ->default(true)
+                    ->after('category_id');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->dropColumn('published');
-        });
+        if (Schema::hasColumn('books', 'published')) {
+            Schema::table('books', function (Blueprint $table) {
+                $table->dropColumn('published');
+            });
+        }
     }
 };

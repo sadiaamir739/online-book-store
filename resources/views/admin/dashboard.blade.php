@@ -731,6 +731,18 @@
                         </a>
 
 
+                        <a href="{{ route('poems.create') }}"
+                           class="action-btn">
+
+                            <i class="bi bi-feather"></i>
+
+                            <span>
+                                Add New Poem
+                            </span>
+
+                        </a>
+
+
                         <a href="{{ route('books.index') }}"
                            class="action-btn">
 

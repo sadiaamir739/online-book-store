@@ -273,6 +273,24 @@
             margin-bottom: 35px;
         }
 
+        .heading-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 18px;
+            background: #d9a943;
+            color: #17243d;
+            padding: 11px 18px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .heading-action:hover {
+            background: #17243d;
+            color: white;
+        }
+
         .heading h2 {
             font-size: 30px;
             color: #17243d;
@@ -863,49 +881,6 @@
 
 
     <!-- =========================
-         ADMIN CONTROLS
-    ========================== -->
-
-    @auth
-
-            <div class="admin-bar">
-
-                <div class="admin-title">
-
-                    <i class="bi bi-journal-plus"></i>
-
-                    Story Options
-
-                </div>
-
-                <div class="admin-actions">
-
-                    @if(auth()->user()->is_admin)
-                        <a
-                            href="{{ route('admin.dashboard') }}"
-                            class="admin-btn dashboard-btn"
-                        >
-                            <i class="bi bi-speedometer2"></i>
-                            Admin Dashboard
-                        </a>
-                    @endif
-
-                    <a
-                        href="{{ route('stories.create') }}"
-                        class="admin-btn add-btn"
-                    >
-                        <i class="bi bi-plus-circle"></i>
-                        Add New Story
-                    </a>
-
-                </div>
-
-            </div>
-
-    @endauth
-
-
-    <!-- =========================
          HERO
     ========================== -->
 
@@ -964,6 +939,13 @@
                 Explore stories created for readers who love
                 imagination and great storytelling.
             </p>
+
+            @auth
+                <a href="{{ route('stories.create') }}" class="heading-action">
+                    <i class="bi bi-plus-circle"></i>
+                    Add Story
+                </a>
+            @endauth
 
         </div>
 
@@ -1200,22 +1182,16 @@
 
 
                     @auth
+                        <a
+                            href="{{ route('stories.create') }}"
+                            class="empty-add-btn"
+                        >
 
-                        @if(auth()->user()->is_admin)
+                            <i class="bi bi-plus-circle"></i>
 
-                            <a
-                                href="{{ route('stories.create') }}"
-                                class="empty-add-btn"
-                            >
+                            Add First Story
 
-                                <i class="bi bi-plus-circle"></i>
-
-                                Add First Story
-
-                            </a>
-
-                        @endif
-
+                        </a>
                     @endauth
 
                 </div>

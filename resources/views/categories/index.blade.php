@@ -265,6 +265,24 @@
             margin-bottom: 40px;
         }
 
+        .heading-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 18px;
+            background: #d9a943;
+            color: #17243d;
+            padding: 11px 18px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .heading-action:hover {
+            background: #17243d;
+            color: white;
+        }
+
         .heading h2 {
             font-size: 30px;
             color: #17243d;
@@ -716,52 +734,6 @@
 
 
     <!-- =========================
-         ADMIN ACTIONS
-    ========================== -->
-
-    @auth
-
-            <div class="admin-bar">
-
-                <div class="admin-info">
-
-                    <i class="bi bi-folder-plus"></i>
-
-                    <span>
-                        Category Options
-                    </span>
-
-                </div>
-
-
-                <div class="admin-actions">
-
-                    <a
-                        href="{{ route('categories.create') }}"
-                        class="admin-btn add-btn"
-                    >
-                        <i class="bi bi-plus-circle"></i>
-                        Add Category
-                    </a>
-
-                    @if(auth()->user()->is_admin)
-                        <a
-                            href="{{ route('admin.dashboard') }}"
-                            class="admin-btn dashboard-btn"
-                        >
-                            <i class="bi bi-speedometer2"></i>
-                            Admin Dashboard
-                        </a>
-                    @endif
-
-                </div>
-
-            </div>
-
-    @endauth
-
-
-    <!-- =========================
          HERO
     ========================== -->
 
@@ -814,6 +786,13 @@
             <p>
                 Explore our collection through different genres.
             </p>
+
+            @auth
+                <a href="{{ route('categories.create') }}" class="heading-action">
+                    <i class="bi bi-plus-circle"></i>
+                    Add Category
+                </a>
+            @endauth
 
         </div>
 

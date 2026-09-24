@@ -753,53 +753,6 @@
 
 
     <!-- =========================
-         ADMIN CONTROLS
-    ========================== -->
-
-    @auth
-
-        @if(auth()->user()->is_admin)
-
-            <div class="admin-bar">
-
-                <div class="admin-bar-left">
-
-                    <i class="bi bi-shield-lock"></i>
-
-                    <span>
-                        Administrator Book Management
-                    </span>
-
-                </div>
-
-                <div class="admin-actions">
-
-                    <a
-                        href="{{ route('admin.dashboard') }}"
-                        class="dashboard-btn"
-                    >
-                        <i class="bi bi-speedometer2"></i>
-                        Admin Dashboard
-                    </a>
-
-                    <a
-                        href="{{ route('books.create') }}"
-                        class="add-book-btn"
-                    >
-                        <i class="bi bi-plus-circle"></i>
-                        Add New Book
-                    </a>
-
-                </div>
-
-            </div>
-
-        @endif
-
-    @endauth
-
-
-    <!-- =========================
          SEARCH
     ========================== -->
 

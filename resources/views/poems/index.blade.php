@@ -44,10 +44,9 @@
             <h2>Latest Poems</h2>
             @auth
                 <div>
-                    @if(auth()->user()->is_admin)
-                        <a href="{{ route('admin.dashboard') }}" class="button primary"><i class="bi bi-speedometer2"></i> Admin Dashboard</a>
+                    @if(!auth()->user()->is_admin)
+                        <a href="{{ route('poems.create') }}" class="button gold"><i class="bi bi-plus-circle"></i> Add Poem</a>
                     @endif
-                    <a href="{{ route('poems.create') }}" class="button gold"><i class="bi bi-plus-circle"></i> Add Poem</a>
                 </div>
             @endauth
         </div>
