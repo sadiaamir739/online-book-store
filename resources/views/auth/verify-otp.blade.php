@@ -60,7 +60,7 @@
     <main class="card">
         <h1>Verify your email</h1>
         <p>Enter the 6-digit code sent to <span class="email">{{ $email }}</span>.</p>
-
+        
         @if ($errors->any())
             <div class="error">
                 @foreach ($errors->all() as $error)

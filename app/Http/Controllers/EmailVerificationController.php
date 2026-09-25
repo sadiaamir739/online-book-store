@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class EmailVerificationController extends Controller
 {
@@ -83,12 +84,16 @@ class EmailVerificationController extends Controller
             return redirect()->route('login');
         }
 
-        $this->sendCode($email, $purpose);
+        if (! self::sendCode($email, $purpose)) {
+            return back()->withErrors([
+                'code' => 'We could not send the verification code. Please try again in a moment.',
+            ]);
+        }
 
         return back()->with('status', 'A new verification code has been sent.');
     }
 
-    public static function sendCode(string $email, string $purpose): void
+    public static function sendCode(string $email, string $purpose): bool
     {
         $code = (string) random_int(100000, 999999);
 
@@ -106,6 +111,22 @@ class EmailVerificationController extends Controller
             'updated_at' => now(),
         ]);
 
-        Mail::to($email)->send(new EmailOtpMail($code));
+        try {
+            retry(
+                3,
+                fn () => Mail::to($email)->send(new EmailOtpMail($code)),
+                1000,
+                fn (\Throwable $exception) => $exception instanceof TransportExceptionInterface,
+            );
+        } catch (TransportExceptionInterface) {
+            \DB::table('email_verification_codes')
+                ->where('email', $email)
+                ->where('purpose', $purpose)
+                ->delete();
+
+            return false;
+        }
+
+        return true;
     }
 }

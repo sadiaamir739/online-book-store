@@ -55,7 +55,9 @@ class StoryController extends Controller
     // Show create story form
     public function create()
     {
-        $categories = Category::all();
+        $categories = Auth::user()?->is_admin
+            ? Category::all()
+            : Category::where('published', true)->get();
 
         return view('stories.create', compact('categories'));
     }
@@ -100,7 +102,9 @@ class StoryController extends Controller
     {
         $this->authorizeStory($story);
 
-        $categories = Category::all();
+        $categories = Auth::user()?->is_admin
+            ? Category::all()
+            : Category::where('published', true)->get();
 
         return view('stories.edit', compact('story', 'categories'));
     }
@@ -262,6 +266,7 @@ class StoryController extends Controller
 
     public function approve(Story $story)
     {
+        abort_unless(Auth::user()?->is_admin, 403);
         $story->update(['published' => true]);
 
         return redirect()

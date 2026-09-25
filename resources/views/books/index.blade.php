@@ -790,6 +790,13 @@
                 Featured <span>Books</span>
             </h2>
 
+            @auth
+                <a href="{{ route('books.create') }}" class="add-book-btn">
+                    <i class="bi bi-plus-circle"></i>
+                    Add Book
+                </a>
+            @endauth
+
         </div>
 
 
@@ -894,26 +901,29 @@
                         </a>
 
 
-                        <!-- ADMIN MANAGEMENT -->
+                        <!-- CONTENT MANAGEMENT -->
 
                         @auth
 
-                            @if(auth()->user()->is_admin)
+                            @if(auth()->user()->is_admin || $book->user_id === auth()->id())
 
                                 <div class="admin-book-actions">
 
                                     @unless($book->published)
-
-                                        <form
-                                            action="{{ route('books.approve', $book->id) }}"
-                                            method="POST"
-                                        >
-                                            @csrf
-                                            <button type="submit" class="edit-btn" style="width:100%;">
-                                                <i class="bi bi-check-circle"></i>
-                                                Approve
-                                            </button>
-                                        </form>
+                                        @if(auth()->user()->is_admin)
+                                            <form
+                                                action="{{ route('books.approve', $book->id) }}"
+                                                method="POST"
+                                            >
+                                                @csrf
+                                                <button type="submit" class="edit-btn" style="width:100%;">
+                                                    <i class="bi bi-check-circle"></i>
+                                                    Approve
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span style="color:#8b671e; font-weight:bold;">Pending admin approval</span>
+                                        @endif
 
                                     @endunless
 
@@ -999,18 +1009,14 @@
 
                     @auth
 
-                        @if(auth()->user()->is_admin)
-
-                            <a
-                                href="{{ route('books.create') }}"
-                                class="add-book-btn"
-                                style="display:inline-flex; margin-top:20px;"
-                            >
-                                <i class="bi bi-plus-circle"></i>
-                                Add Your First Book
-                            </a>
-
-                        @endif
+                        <a
+                            href="{{ route('books.create') }}"
+                            class="add-book-btn"
+                            style="display:inline-flex; margin-top:20px;"
+                        >
+                            <i class="bi bi-plus-circle"></i>
+                            Add Your First Book
+                        </a>
 
                     @endauth
 

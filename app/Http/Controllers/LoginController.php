@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,13 +25,28 @@ class LoginController extends Controller
         ]);
 
         if (Auth::validate($credentials)) {
+            $user = User::where('email', $credentials['email'])->firstOrFail();
+
+            if ($user->email_verified_at) {
+                Auth::login($user, $request->boolean('remember'));
+                $request->session()->regenerate();
+
+                return $user->is_admin
+                    ? redirect()->route('admin.dashboard')
+                    : redirect()->route('home');
+            }
+
             $request->session()->put([
                 'otp.email' => $credentials['email'],
                 'otp.purpose' => 'login',
                 'otp.remember' => $request->boolean('remember'),
             ]);
 
-            EmailVerificationController::sendCode($credentials['email'], 'login');
+            if (! EmailVerificationController::sendCode($credentials['email'], 'login')) {
+                return back()->withErrors([
+                    'email' => 'We could not send a verification code. Please try again in a moment.',
+                ])->onlyInput('email');
+            }
 
             return redirect()->route('otp.show')->with('status', 'A verification code has been sent to your email.');
         }

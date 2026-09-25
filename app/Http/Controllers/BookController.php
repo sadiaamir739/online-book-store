@@ -15,10 +15,13 @@ class BookController extends Controller
 
     public function index()
     {
-        $query = Book::with('category');
+        $query = Book::with('category', 'user');
 
         if (!Auth::user()?->is_admin) {
-            $query->where('published', true);
+            $query->where(function ($query) {
+                $query->where('published', true)
+                    ->orWhere('user_id', Auth::id());
+            });
         }
 
         $books = $query->get();
@@ -36,7 +39,7 @@ class BookController extends Controller
         $book = Book::with('chapters.pages')
             ->findOrFail($id);
 
-        if (!$book->published && !Auth::user()?->is_admin) {
+        if (!$book->published && (!Auth::check() || (!Auth::user()->is_admin && $book->user_id !== Auth::id()))) {
             abort(404);
         }
 
@@ -50,7 +53,9 @@ class BookController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = Auth::user()?->is_admin
+            ? Category::all()
+            : Category::where('published', true)->get();
 
         return view('books.create', compact('categories'));
     }
@@ -88,6 +93,7 @@ class BookController extends Controller
             'description' => $request->description,
             'cover_image' => $coverImage,
             'published' => Auth::user()?->is_admin ?? false,
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()
@@ -103,7 +109,10 @@ class BookController extends Controller
     public function edit($id)
     {
         $book = Book::findOrFail($id);
-        $categories = Category::all();
+        $this->authorizeBook($book);
+        $categories = Auth::user()?->is_admin
+            ? Category::all()
+            : Category::where('published', true)->get();
 
         return view('books.edit', compact('book', 'categories'));
     }
@@ -126,6 +135,7 @@ class BookController extends Controller
         ]);
 
         $book = Book::findOrFail($id);
+        $this->authorizeBook($book);
 
         $coverImage = $book->cover_image;
 
@@ -142,6 +152,7 @@ class BookController extends Controller
             'price' => $request->price,
             'description' => $request->description,
             'cover_image' => $coverImage,
+            'published' => Auth::user()->is_admin ? $book->published : false,
         ]);
 
         return redirect()
@@ -157,6 +168,7 @@ class BookController extends Controller
     public function destroy($id)
     {
         $book = Book::findOrFail($id);
+        $this->authorizeBook($book);
 
         $book->delete();
 
@@ -167,12 +179,22 @@ class BookController extends Controller
 
     public function approve($id)
     {
+        abort_unless(Auth::user()?->is_admin, 403);
         $book = Book::findOrFail($id);
         $book->update(['published' => true]);
 
         return redirect()
             ->route('books.index')
             ->with('success', 'Book approved successfully');
+    }
+
+    private function authorizeBook(Book $book): void
+    {
+        $user = Auth::user();
+
+        if (!$user || (!$user->is_admin && $book->user_id !== $user->id)) {
+            abort(403, 'You are not allowed to modify this book.');
+        }
     }
 }
 

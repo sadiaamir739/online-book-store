@@ -17,6 +17,7 @@ class Book extends Model
         'cover_image',
         'category_id',
         'published',
+        'user_id',
     ];
 
     protected function casts(): array
@@ -41,5 +42,10 @@ class Book extends Model
     {
         return $this->hasMany(Chapter::class)
                     ->orderBy('chapter_number');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

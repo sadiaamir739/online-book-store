@@ -47,7 +47,7 @@ class EmailOtpAuthenticationTest extends TestCase
         $this->assertNotNull(User::first()->email_verified_at);
     }
 
-    public function test_login_requires_email_otp_before_authentication(): void
+    public function test_verified_user_can_login_without_email_otp(): void
     {
         Mail::fake();
         $user = User::factory()->create([
@@ -59,19 +59,28 @@ class EmailOtpAuthenticationTest extends TestCase
         $this->post(route('login.submit'), [
             'email' => $user->email,
             'password' => 'password123',
+        ])->assertRedirect(route('home'));
+
+        $this->assertAuthenticatedAs($user);
+        Mail::assertNothingSent();
+    }
+
+    public function test_unverified_user_still_requires_email_otp_on_login(): void
+    {
+        Mail::fake();
+        $user = User::factory()->unverified()->create([
+            'email' => 'reader@example.com',
+            'password' => 'password123',
+        ]);
+
+        $this->post(route('login.submit'), [
+            'email' => $user->email,
+            'password' => 'password123',
         ])->assertRedirect(route('otp.show'));
 
         $this->assertGuest();
-        $sentCode = null;
-        Mail::assertSent(EmailOtpMail::class, function (EmailOtpMail $mail) use (&$sentCode) {
-            $sentCode = $mail->code;
-
-            return $mail->hasTo('reader@example.com');
-        });
-
-        $this->post(route('otp.verify'), ['code' => $sentCode])
-            ->assertRedirect(route('home'));
-
-        $this->assertAuthenticatedAs($user);
+        Mail::assertSent(EmailOtpMail::class, fn (EmailOtpMail $mail) =>
+            $mail->hasTo('reader@example.com')
+        );
     }
 }

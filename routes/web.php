@@ -14,6 +14,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\ChatbotController;
 
 
 // =====================================================
@@ -42,6 +43,10 @@ Route::post('/verify-otp', [EmailVerificationController::class, 'verify'])
 
 Route::post('/verify-otp/resend', [EmailVerificationController::class, 'resend'])
     ->name('otp.resend');
+
+Route::post('/chatbot/message', [ChatbotController::class, 'message'])
+    ->middleware('throttle:chatbot')
+    ->name('chatbot.message');
 
 Route::get('/forgot-password', [PasswordResetController::class, 'request'])
     ->name('password.request');
@@ -182,9 +187,9 @@ Route::get('/books/{book}/read',
 )->name('books.read');
 
 
-// ADMIN - BOOK CREATION
+// AUTHENTICATED USER - BOOK SUBMISSION
 
-Route::middleware(['auth', 'can:admin'])->group(function () {
+Route::middleware('auth')->group(function () {
 
     Route::get('/books/create',
         [BookController::class, 'create']
@@ -197,9 +202,9 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 });
 
 
-// ADMIN - BOOK MANAGEMENT
+// BOOK MANAGEMENT
 
-Route::middleware(['auth', 'can:admin'])->group(function () {
+Route::middleware('auth')->group(function () {
 
 
     // EDIT BOOK
@@ -221,6 +226,11 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::delete('/books/{book}',
         [BookController::class, 'destroy']
     )->name('books.destroy');
+});
+
+// ADMIN - BOOK APPROVAL
+
+Route::middleware(['auth', 'can:admin'])->group(function () {
 
     Route::post('/books/{book}/approve',
         [BookController::class, 'approve']

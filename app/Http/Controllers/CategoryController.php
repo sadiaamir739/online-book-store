@@ -11,7 +11,7 @@ class CategoryController extends Controller
     // Show all categories
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::latest()->get();
 
         return view('categories.index', compact('categories'));
     }
@@ -34,6 +34,7 @@ class CategoryController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'user_id' => Auth::id(),
+            'published' => true,
         ]);
 
         return redirect()
@@ -64,6 +65,7 @@ class CategoryController extends Controller
         $category->update([
             'name' => $request->name,
             'description' => $request->description,
+            'published' => true,
         ]);
 
         return redirect()

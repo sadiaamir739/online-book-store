@@ -10,8 +10,16 @@ class Category extends Model
     protected $fillable = [
         'name',
         'description',
+        'published',
         'user_id',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'published' => 'boolean',
+        ];
+    }
 
     public function user()
     {

@@ -33,7 +33,11 @@ class RegisterController extends Controller
             'otp.remember' => false,
         ]);
 
-        EmailVerificationController::sendCode($user->email, 'registration');
+        if (! EmailVerificationController::sendCode($user->email, 'registration')) {
+            return back()->withErrors([
+                'email' => 'We could not send a verification code. Please try again in a moment.',
+            ])->onlyInput('email');
+        }
 
         return redirect()->route('otp.show')->with('status', 'A verification code has been sent to your email.');
     }
